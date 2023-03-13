@@ -1,22 +1,20 @@
 package storage
 
-import "errors"
-
-type Course struct {
-	Id   int
-	Name string
-}
+import (
+	"errors"
+	"wordfulness/types"
+)
 
 type MemoryStorage struct {
-	Courses []Course
+	Courses []types.Course
 }
 
-func (storage *MemoryStorage) GetAllCourses() []Course {
+func (storage *MemoryStorage) GetAllCourses() []types.Course {
 	return storage.Courses
 }
 
 func (storage *MemoryStorage) CreateCourse(name string) error {
-	course := &Course{Name: name}
+	course := &types.Course{Name: name}
 
 	for _, course := range storage.Courses {
 		if course.Name == name {

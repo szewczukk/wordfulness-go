@@ -1,6 +1,8 @@
 package storage
 
+import "wordfulness/types"
+
 type IStorage interface {
-	GetAllCourses() []Course
+	GetAllCourses() []types.Course
 	CreateCourse(name string) error
 }

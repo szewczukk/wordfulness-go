@@ -5,11 +5,12 @@ import (
 	"log"
 	"net/http"
 	"wordfulness/storage"
+	"wordfulness/types"
 	"wordfulness/utils"
 )
 
 type HomepageData struct {
-	Courses []storage.Course
+	Courses []types.Course
 	Error   error
 }
 
