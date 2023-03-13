@@ -8,17 +8,27 @@ import (
 	"wordfulness/utils"
 )
 
+type HomepageData struct {
+	Courses []storage.Course
+	Error   error
+}
+
 func homepage(w http.ResponseWriter, r *http.Request, storage storage.IStorage) {
+	pagedata := &HomepageData{}
 	template := template.Must(template.ParseFiles("templates/homepage.html"))
+
 	if r.Method == "POST" {
 		r.ParseForm()
 
-		storage.CreateCourse(r.Form.Get("name"))
+		error := storage.CreateCourse(r.Form.Get("name"))
+		if error != nil {
+			pagedata.Error = error
+		}
 	}
 
-	courses := storage.GetAllCourses()
+	pagedata.Courses = storage.GetAllCourses()
 
-	template.Execute(w, courses)
+	template.Execute(w, pagedata)
 }
 
 func main() {
