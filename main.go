@@ -4,9 +4,9 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"wordfulness/middleware"
 	"wordfulness/storage"
 	"wordfulness/types"
-	"wordfulness/utils"
 )
 
 type HomepageData struct {
@@ -35,7 +35,7 @@ func homepage(w http.ResponseWriter, r *http.Request, storage storage.IStorage) 
 func main() {
 	storage := &storage.MemoryStorage{}
 
-	http.HandleFunc("/", utils.WithStorage(storage, homepage))
+	http.HandleFunc("/", middleware.UseStorage(storage, homepage))
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

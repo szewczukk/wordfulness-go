@@ -1,11 +1,11 @@
-package utils
+package middleware
 
 import (
 	"net/http"
 	"wordfulness/storage"
 )
 
-func WithStorage(
+func UseStorage(
 	storage storage.IStorage,
 	handler func(http.ResponseWriter, *http.Request, storage.IStorage),
 ) func(http.ResponseWriter, *http.Request) {
