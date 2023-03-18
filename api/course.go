@@ -49,13 +49,13 @@ func GetSingleCourse(
 		data := &GetSingleCourseData{}
 		id := r.URL.Query().Get("id")
 
-		parsedId, err := strconv.ParseInt(id, 10, 16)
+		parsedId, err := strconv.ParseInt(id, 10, 32)
 
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		data.Course, data.Error = storage.GetCourse(int(parsedId))
+		data.Course, data.Error = storage.GetCourse(parsedId)
 
 		template.Execute(w, data)
 	}
@@ -67,13 +67,13 @@ func DeleteCourseData(
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := r.URL.Query().Get("id")
 
-		parsedId, err := strconv.ParseInt(id, 10, 16)
+		parsedId, err := strconv.ParseInt(id, 10, 32)
 
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		err = storage.DeleteCourse(int(parsedId))
+		err = storage.DeleteCourse(parsedId)
 
 		if err != nil {
 			log.Fatal(err)
