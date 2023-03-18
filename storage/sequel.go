@@ -34,6 +34,18 @@ func (storage *SequelStorage) GetAllCourses() ([]*types.Course, error) {
 	return courses, nil
 }
 
+func (storage *SequelStorage) GetCourse(id int) (*types.Course, error) {
+	row := storage.Db.QueryRow("SELECT id, name FROM courses WHERE id = ?", id)
+
+	course := new(types.Course)
+	err := row.Scan(&course.Id, &course.Name)
+	if err != nil {
+		return nil, err
+	}
+
+	return course, nil
+}
+
 func (storage *SequelStorage) CreateCourse(name string) error {
 	_, err := storage.Db.Exec("INSERT INTO courses (name) VALUES (?)", name)
 

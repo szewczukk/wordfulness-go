@@ -20,8 +20,10 @@ func main() {
 
 	storage := &storage.SequelStorage{Db: db}
 	tmpl := template.Must(template.ParseFiles("templates/homepage.html"))
+	courseTemplate := template.Must(template.ParseFiles("templates/course.html"))
 
 	http.HandleFunc("/", api.GetCourses(storage, tmpl))
+	http.HandleFunc("/courses", api.GetCourse(storage, courseTemplate))
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

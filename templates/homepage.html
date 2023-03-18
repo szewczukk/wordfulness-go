@@ -16,7 +16,11 @@
   <ul>
     {{range .Courses}}
 
-    <li>{{.Name}}</li>
+    <li>
+      <a href="/courses?id={{.Id}}">
+        {{.Name}}
+      </a>
+    </li>
 
     {{end}}
   </ul>
