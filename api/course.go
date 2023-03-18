@@ -8,7 +8,7 @@ import (
 )
 
 type GetCourseData struct {
-	Courses []types.Course
+	Courses []*types.Course
 	Error   error
 }
 
@@ -28,7 +28,7 @@ func GetCourses(
 			}
 		}
 
-		data.Courses = storage.GetAllCourses()
+		data.Courses, data.Error = storage.GetAllCourses()
 
 		template.Execute(w, data)
 	}

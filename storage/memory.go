@@ -6,11 +6,11 @@ import (
 )
 
 type MemoryStorage struct {
-	Courses []types.Course
+	Courses []*types.Course
 }
 
-func (storage *MemoryStorage) GetAllCourses() []types.Course {
-	return storage.Courses
+func (storage *MemoryStorage) GetAllCourses() ([]*types.Course, error) {
+	return storage.Courses, nil
 }
 
 func (storage *MemoryStorage) CreateCourse(name string) error {
@@ -22,7 +22,7 @@ func (storage *MemoryStorage) CreateCourse(name string) error {
 		}
 	}
 
-	storage.Courses = append(storage.Courses, *course)
+	storage.Courses = append(storage.Courses, course)
 
 	return nil
 }
