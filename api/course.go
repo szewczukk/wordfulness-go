@@ -12,10 +12,12 @@ type GetCourseData struct {
 	Error   error
 }
 
-func GetCourses(storage storage.IStorage) func(http.ResponseWriter, *http.Request) {
+func GetCourses(
+	storage storage.IStorage,
+	template *template.Template,
+) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		data := &GetCourseData{}
-		template := template.Must(template.ParseFiles("templates/homepage.html"))
 
 		if r.Method == "POST" {
 			r.ParseForm()
