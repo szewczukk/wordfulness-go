@@ -9,17 +9,17 @@ import (
 	"wordfulness/types"
 )
 
-type GetCoursesData struct {
+type GetMultipleCoursesData struct {
 	Courses []*types.Course
 	Error   error
 }
 
-func GetCourses(
+func GetMultipleCourses(
 	storage storage.IStorage,
 	template *template.Template,
 ) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		data := &GetCoursesData{}
+		data := &GetMultipleCoursesData{}
 
 		if r.Method == "POST" {
 			r.ParseForm()
@@ -36,17 +36,17 @@ func GetCourses(
 	}
 }
 
-type GetCourseData struct {
+type GetSingleCourseData struct {
 	Course *types.Course
 	Error  error
 }
 
-func GetCourse(
+func GetSingleCourse(
 	storage storage.IStorage,
 	template *template.Template,
 ) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		data := &GetCourseData{}
+		data := &GetSingleCourseData{}
 		id := r.URL.Query().Get("id")
 
 		parsedId, err := strconv.ParseInt(id, 10, 16)
