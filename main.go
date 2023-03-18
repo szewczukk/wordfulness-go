@@ -19,8 +19,14 @@ func main() {
 	}
 
 	storage := &storage.SequelStorage{Db: db}
-	multipleCoursesTemplate := template.Must(template.ParseFiles("templates/homepage.html"))
-	singleCourseTemplate := template.Must(template.ParseFiles("templates/course.html"))
+	multipleCoursesTemplate := template.Must(template.ParseFiles(
+		"templates/layout.html",
+		"templates/homepage.html",
+	))
+	singleCourseTemplate := template.Must(template.ParseFiles(
+		"templates/layout.html",
+		"templates/course.html",
+	))
 
 	http.HandleFunc("/", api.GetMultipleCourses(storage, multipleCoursesTemplate))
 	http.HandleFunc("/courses", api.GetSingleCourse(storage, singleCourseTemplate))
