@@ -55,3 +55,13 @@ func (storage *SequelStorage) CreateCourse(name string) error {
 
 	return nil
 }
+
+func (storage *SequelStorage) DeleteCourse(id int) error {
+	_, err := storage.Db.Exec("DELETE FROM courses WHERE id = ?", id)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

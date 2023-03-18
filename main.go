@@ -30,6 +30,7 @@ func main() {
 
 	http.HandleFunc("/", api.GetMultipleCourses(storage, multipleCoursesTemplate))
 	http.HandleFunc("/courses", api.GetSingleCourse(storage, singleCourseTemplate))
+	http.HandleFunc("/delete-course", api.DeleteCourseData(storage))
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

@@ -60,3 +60,25 @@ func GetSingleCourse(
 		template.Execute(w, data)
 	}
 }
+
+func DeleteCourseData(
+	storage storage.IStorage,
+) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := r.URL.Query().Get("id")
+
+		parsedId, err := strconv.ParseInt(id, 10, 16)
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		err = storage.DeleteCourse(int(parsedId))
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		http.Redirect(w, r, "/", http.StatusPermanentRedirect)
+	}
+}
