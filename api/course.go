@@ -12,20 +12,22 @@ type GetCourseData struct {
 	Error   error
 }
 
-func GetCourse(w http.ResponseWriter, r *http.Request, storage storage.IStorage) {
-	data := &GetCourseData{}
-	template := template.Must(template.ParseFiles("templates/homepage.html"))
+func GetCourses(storage storage.IStorage) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		data := &GetCourseData{}
+		template := template.Must(template.ParseFiles("templates/homepage.html"))
 
-	if r.Method == "POST" {
-		r.ParseForm()
+		if r.Method == "POST" {
+			r.ParseForm()
 
-		error := storage.CreateCourse(r.Form.Get("name"))
-		if error != nil {
-			data.Error = error
+			error := storage.CreateCourse(r.Form.Get("name"))
+			if error != nil {
+				data.Error = error
+			}
 		}
+
+		data.Courses = storage.GetAllCourses()
+
+		template.Execute(w, data)
 	}
-
-	data.Courses = storage.GetAllCourses()
-
-	template.Execute(w, data)
 }

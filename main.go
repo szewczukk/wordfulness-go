@@ -4,14 +4,13 @@ import (
 	"log"
 	"net/http"
 	"wordfulness/api"
-	"wordfulness/middleware"
 	"wordfulness/storage"
 )
 
 func main() {
 	storage := &storage.MemoryStorage{}
 
-	http.HandleFunc("/", middleware.UseStorage(storage, api.GetCourse))
+	http.HandleFunc("/", api.GetCourses(storage))
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
