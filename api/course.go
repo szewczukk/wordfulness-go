@@ -13,20 +13,8 @@ type HomePageStorage interface {
 	GetAllCourses() ([]*types.Course, error)
 }
 
-func HomePage(storage HomePageStorage, template *template.Template) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == "POST" {
-			r.ParseForm()
-
-			name := r.Form.Get("name")
-
-			err := storage.CreateCourse(name)
-
-			if err != nil {
-				log.Fatal(err)
-			}
-		}
-
+func HomePageGET(storage HomePageStorage, template *template.Template) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		courses, err := storage.GetAllCourses()
 
 		if err != nil {
@@ -34,7 +22,27 @@ func HomePage(storage HomePageStorage, template *template.Template) http.Handler
 		}
 
 		template.Execute(w, courses)
-	}
+	})
+}
+
+func HomePagePOST(storage HomePageStorage, template *template.Template) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		r.ParseForm()
+
+		name := r.Form.Get("name")
+
+		err := storage.CreateCourse(name)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		courses, err := storage.GetAllCourses()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		template.Execute(w, courses)
+	})
 }
 
 type DetailedCourseStorage interface {
@@ -42,7 +50,7 @@ type DetailedCourseStorage interface {
 }
 
 func DetailedCourse(storage DetailedCourseStorage, template *template.Template) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		id := r.URL.Query().Get("id")
 
 		parsedId, err := strconv.ParseInt(id, 10, 32)
@@ -58,7 +66,7 @@ func DetailedCourse(storage DetailedCourseStorage, template *template.Template) 
 		}
 
 		template.Execute(w, course)
-	}
+	})
 }
 
 type DeleteCourseStorage interface {
@@ -66,7 +74,7 @@ type DeleteCourseStorage interface {
 }
 
 func DeleteCourse(storage DeleteCourseStorage) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		id := r.URL.Query().Get("id")
 
 		parsedId, err := strconv.ParseInt(id, 10, 32)
@@ -82,5 +90,5 @@ func DeleteCourse(storage DeleteCourseStorage) http.HandlerFunc {
 		}
 
 		http.Redirect(w, r, "/", http.StatusPermanentRedirect)
-	}
+	})
 }

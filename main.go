@@ -28,12 +28,24 @@ func main() {
 		"templates/course.html",
 	))
 
-	http.HandleFunc("/", api.HomePage(storage, multipleCoursesTemplate))
-	http.HandleFunc("/courses", api.DetailedCourse(storage, singleCourseTemplate))
-	http.HandleFunc("/delete-course", api.DeleteCourse(storage))
+	// http.HandleFunc("/", api.HomePage(storage, multipleCoursesTemplate))
+	// http.HandleFunc("/courses", api.DetailedCourse(storage, singleCourseTemplate))
+	// http.HandleFunc("/delete-course", api.DeleteCourse(storage))
+
+	// fs := http.FileServer(http.Dir("./static"))
+	// http.Handle("/static/", http.StripPrefix("/static/", fs))
+
+	// log.Fatal(http.ListenAndServe(":8080", nil))
+
+	router := api.NewRouter()
+
+	router.GET("/", api.HomePageGET(storage, multipleCoursesTemplate))
+	router.POST("/", api.HomePagePOST(storage, multipleCoursesTemplate))
+	router.GET("/courses", api.DetailedCourse(storage, singleCourseTemplate))
+	router.GET("/delete-course", api.DeleteCourse(storage))
 
 	fs := http.FileServer(http.Dir("./static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(":8080", router))
 }
