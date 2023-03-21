@@ -14,10 +14,7 @@ type GetMultipleCoursesData struct {
 	Error   error
 }
 
-func GetMultipleCourses(
-	storage storage.IStorage,
-	template *template.Template,
-) func(http.ResponseWriter, *http.Request) {
+func GetMultipleCourses(storage storage.IStorage, template *template.Template) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		data := &GetMultipleCoursesData{}
 
@@ -41,10 +38,7 @@ type GetSingleCourseData struct {
 	Error  error
 }
 
-func GetSingleCourse(
-	storage storage.IStorage,
-	template *template.Template,
-) func(http.ResponseWriter, *http.Request) {
+func GetSingleCourse(storage storage.IStorage, template *template.Template) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		data := &GetSingleCourseData{}
 		id := r.URL.Query().Get("id")
@@ -61,9 +55,7 @@ func GetSingleCourse(
 	}
 }
 
-func DeleteCourseData(
-	storage storage.IStorage,
-) func(http.ResponseWriter, *http.Request) {
+func DeleteCourseData(storage storage.IStorage) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := r.URL.Query().Get("id")
 
