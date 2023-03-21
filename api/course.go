@@ -5,10 +5,15 @@ import (
 	"log"
 	"net/http"
 	"strconv"
-	"wordfulness/storage"
+	"wordfulness/types"
 )
 
-func HomePage(storage storage.IStorage, template *template.Template) http.HandlerFunc {
+type HomePageStorage interface {
+	CreateCourse(string) error
+	GetAllCourses() ([]*types.Course, error)
+}
+
+func HomePage(storage HomePageStorage, template *template.Template) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == "POST" {
 			r.ParseForm()
@@ -29,7 +34,11 @@ func HomePage(storage storage.IStorage, template *template.Template) http.Handle
 	}
 }
 
-func DetailedCourse(storage storage.IStorage, template *template.Template) http.HandlerFunc {
+type DetailedCourseStorage interface {
+	GetCourse(int64) (*types.Course, error)
+}
+
+func DetailedCourse(storage DetailedCourseStorage, template *template.Template) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := r.URL.Query().Get("id")
 
@@ -49,7 +58,11 @@ func DetailedCourse(storage storage.IStorage, template *template.Template) http.
 	}
 }
 
-func DeleteCourse(storage storage.IStorage) http.HandlerFunc {
+type DeleteCourseStorage interface {
+	DeleteCourse(int64) error
+}
+
+func DeleteCourse(storage DeleteCourseStorage) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := r.URL.Query().Get("id")
 
