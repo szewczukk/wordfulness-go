@@ -28,7 +28,7 @@ func main() {
 		"templates/course.html",
 	))
 
-	http.HandleFunc("/", api.GetMultipleCourses(storage, multipleCoursesTemplate))
+	http.HandleFunc("/", api.HomePage(storage, multipleCoursesTemplate))
 	http.HandleFunc("/courses", api.GetSingleCourse(storage, singleCourseTemplate))
 	http.HandleFunc("/delete-course", api.DeleteCourseData(storage))
 

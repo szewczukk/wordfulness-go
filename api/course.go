@@ -9,27 +9,25 @@ import (
 	"wordfulness/types"
 )
 
-type GetMultipleCoursesData struct {
-	Courses []*types.Course
-	Error   error
-}
-
-func GetMultipleCourses(storage storage.IStorage, template *template.Template) http.HandlerFunc {
+func HomePage(storage storage.IStorage, template *template.Template) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		data := &GetMultipleCoursesData{}
 
 		if r.Method == "POST" {
 			r.ParseForm()
 
-			error := storage.CreateCourse(r.Form.Get("name"))
-			if error != nil {
-				data.Error = error
+			err := storage.CreateCourse(r.Form.Get("name"))
+			if err != nil {
+				log.Fatal(err)
 			}
 		}
 
-		data.Courses, data.Error = storage.GetAllCourses()
+		courses, err := storage.GetAllCourses()
 
-		template.Execute(w, data)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		template.Execute(w, courses)
 	}
 }
 
