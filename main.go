@@ -28,15 +28,6 @@ func main() {
 		"templates/course.html",
 	))
 
-	// http.HandleFunc("/", api.HomePage(storage, multipleCoursesTemplate))
-	// http.HandleFunc("/courses", api.DetailedCourse(storage, singleCourseTemplate))
-	// http.HandleFunc("/delete-course", api.DeleteCourse(storage))
-
-	// fs := http.FileServer(http.Dir("./static"))
-	// http.Handle("/static/", http.StripPrefix("/static/", fs))
-
-	// log.Fatal(http.ListenAndServe(":8080", nil))
-
 	router := routes.NewRouter()
 
 	router.GET("/", routes.HomePage(storage, multipleCoursesTemplate))
