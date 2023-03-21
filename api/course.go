@@ -10,7 +10,6 @@ import (
 
 func HomePage(storage storage.IStorage, template *template.Template) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-
 		if r.Method == "POST" {
 			r.ParseForm()
 
@@ -50,7 +49,7 @@ func DetailedCourse(storage storage.IStorage, template *template.Template) http.
 	}
 }
 
-func DeleteCourseData(storage storage.IStorage) http.HandlerFunc {
+func DeleteCourse(storage storage.IStorage) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := r.URL.Query().Get("id")
 
