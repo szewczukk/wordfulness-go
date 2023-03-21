@@ -18,7 +18,10 @@ func HomePage(storage HomePageStorage, template *template.Template) http.Handler
 		if r.Method == "POST" {
 			r.ParseForm()
 
-			err := storage.CreateCourse(r.Form.Get("name"))
+			name := r.Form.Get("name")
+
+			err := storage.CreateCourse(name)
+
 			if err != nil {
 				log.Fatal(err)
 			}
