@@ -1,4 +1,4 @@
-package api
+package routes
 
 import (
 	"html/template"
@@ -9,14 +9,12 @@ import (
 )
 
 type HomePageStorage interface {
-	CreateCourse(string) error
 	GetAllCourses() ([]*types.Course, error)
 }
 
-func HomePageGET(storage HomePageStorage, template *template.Template) http.HandlerFunc {
+func HomePage(storage HomePageStorage, template *template.Template) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		courses, err := storage.GetAllCourses()
-
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -25,7 +23,12 @@ func HomePageGET(storage HomePageStorage, template *template.Template) http.Hand
 	})
 }
 
-func HomePagePOST(storage HomePageStorage, template *template.Template) http.HandlerFunc {
+type CreateCourseStorage interface {
+	CreateCourse(string) error
+	GetAllCourses() ([]*types.Course, error)
+}
+
+func CreateCourse(storage CreateCourseStorage, template *template.Template) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 
@@ -54,13 +57,11 @@ func DetailedCourse(storage DetailedCourseStorage, template *template.Template) 
 		id := r.URL.Query().Get("id")
 
 		parsedId, err := strconv.ParseInt(id, 10, 32)
-
 		if err != nil {
 			log.Fatal(err)
 		}
 
 		course, err := storage.GetCourse(parsedId)
-
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -78,13 +79,11 @@ func DeleteCourse(storage DeleteCourseStorage) http.HandlerFunc {
 		id := r.URL.Query().Get("id")
 
 		parsedId, err := strconv.ParseInt(id, 10, 32)
-
 		if err != nil {
 			log.Fatal(err)
 		}
 
 		err = storage.DeleteCourse(parsedId)
-
 		if err != nil {
 			log.Fatal(err)
 		}

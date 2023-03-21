@@ -5,7 +5,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"wordfulness/api"
+	"wordfulness/routes"
 	"wordfulness/storage"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -37,12 +37,12 @@ func main() {
 
 	// log.Fatal(http.ListenAndServe(":8080", nil))
 
-	router := api.NewRouter()
+	router := routes.NewRouter()
 
-	router.GET("/", api.HomePageGET(storage, multipleCoursesTemplate))
-	router.POST("/", api.HomePagePOST(storage, multipleCoursesTemplate))
-	router.GET("/courses", api.DetailedCourse(storage, singleCourseTemplate))
-	router.GET("/delete-course", api.DeleteCourse(storage))
+	router.GET("/", routes.HomePage(storage, multipleCoursesTemplate))
+	router.POST("/", routes.CreateCourse(storage, multipleCoursesTemplate))
+	router.GET("/courses", routes.DetailedCourse(storage, singleCourseTemplate))
+	router.GET("/delete-course", routes.DeleteCourse(storage))
 
 	fs := http.FileServer(http.Dir("./static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
