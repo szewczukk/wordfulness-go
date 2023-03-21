@@ -29,7 +29,7 @@ func main() {
 	))
 
 	http.HandleFunc("/", api.HomePage(storage, multipleCoursesTemplate))
-	http.HandleFunc("/courses", api.GetSingleCourse(storage, singleCourseTemplate))
+	http.HandleFunc("/courses", api.DetailedCourse(storage, singleCourseTemplate))
 	http.HandleFunc("/delete-course", api.DeleteCourseData(storage))
 
 	fs := http.FileServer(http.Dir("./static"))

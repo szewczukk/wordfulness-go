@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strconv"
 	"wordfulness/storage"
-	"wordfulness/types"
 )
 
 func HomePage(storage storage.IStorage, template *template.Template) http.HandlerFunc {
@@ -31,14 +30,8 @@ func HomePage(storage storage.IStorage, template *template.Template) http.Handle
 	}
 }
 
-type GetSingleCourseData struct {
-	Course *types.Course
-	Error  error
-}
-
-func GetSingleCourse(storage storage.IStorage, template *template.Template) http.HandlerFunc {
+func DetailedCourse(storage storage.IStorage, template *template.Template) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		data := &GetSingleCourseData{}
 		id := r.URL.Query().Get("id")
 
 		parsedId, err := strconv.ParseInt(id, 10, 32)
@@ -47,9 +40,13 @@ func GetSingleCourse(storage storage.IStorage, template *template.Template) http
 			log.Fatal(err)
 		}
 
-		data.Course, data.Error = storage.GetCourse(parsedId)
+		course, err := storage.GetCourse(parsedId)
 
-		template.Execute(w, data)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		template.Execute(w, course)
 	}
 }
 
