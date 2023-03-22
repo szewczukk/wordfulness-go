@@ -2,11 +2,26 @@ package storage
 
 import (
 	"database/sql"
+	"log"
 	"wordfulness/types"
 )
 
 type SequelStorage struct {
 	Db *sql.DB
+}
+
+func (storage *SequelStorage) Initialize() {
+	query := `
+		CREATE TABLE IF NOT EXISTS courses (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			name VARCHAR(20) UNIQUE
+		);
+	`
+
+	_, err := storage.Db.Exec(query)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func (storage *SequelStorage) GetAllCourses() ([]*types.Course, error) {

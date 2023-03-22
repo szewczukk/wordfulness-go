@@ -13,12 +13,13 @@ import (
 
 func main() {
 	db, err := sql.Open("sqlite3", "database.sqlite")
-
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	storage := &storage.SequelStorage{Db: db}
+	storage.Initialize()
+
 	homePageTemplate := template.Must(template.ParseFiles(
 		"templates/layout.html",
 		"templates/homepage.html",
