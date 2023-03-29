@@ -30,6 +30,11 @@ func (s *MemoryStorage) GetCourse(id int64) (*types.Course, error) {
 }
 
 func (s *MemoryStorage) CreateCourse(name string) error {
+	for _, course := range s.courses {
+		if course.Name == name {
+			return errors.New("duplicate")
+		}
+	}
 	s.courses = append(s.courses, &types.Course{Id: len(s.courses), Name: name})
 	return nil
 }
