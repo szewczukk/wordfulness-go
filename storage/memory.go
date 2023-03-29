@@ -7,13 +7,11 @@ import (
 
 type MemoryStorage struct {
 	courses []*types.Course
-	nextId  int64
 }
 
-func NewMemoryStorage(courses []*types.Course, nextId int64) *MemoryStorage {
+func NewMemoryStorage(courses []*types.Course) *MemoryStorage {
 	return &MemoryStorage{
 		courses: courses,
-		nextId:  nextId,
 	}
 }
 
@@ -32,7 +30,6 @@ func (s *MemoryStorage) GetCourse(id int64) (*types.Course, error) {
 }
 
 func (s *MemoryStorage) CreateCourse(name string) error {
-	s.courses = append(s.courses, &types.Course{Id: int(s.nextId), Name: name})
-	s.nextId++
+	s.courses = append(s.courses, &types.Course{Id: len(s.courses), Name: name})
 	return nil
 }

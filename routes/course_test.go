@@ -17,7 +17,7 @@ func TestHomePage(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()
 
-	storage := storage.NewMemoryStorage([]*types.Course{{Id: 0, Name: "German"}}, 1)
+	storage := storage.NewMemoryStorage([]*types.Course{{Id: 0, Name: "German"}})
 	template, _ := template.New("homepage").Parse("{{range .}}{{.Id}} {{.Name}}{{end}}")
 
 	routes.HomePage(storage, template)(w, req)
@@ -36,7 +36,7 @@ func TestCreateCourse(t *testing.T) {
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	w := httptest.NewRecorder()
 
-	storage := storage.NewMemoryStorage([]*types.Course{{Id: 0, Name: "German"}}, 1)
+	storage := storage.NewMemoryStorage([]*types.Course{{Id: 0, Name: "German"}})
 	template, _ := template.New("homepage").Parse("{{range .}}{{.Id}} {{.Name}} {{end}}")
 
 	routes.CreateCourse(storage, template)(w, req)
@@ -51,7 +51,7 @@ func TestExistingDetailedCourse(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/course?id=0", nil)
 	w := httptest.NewRecorder()
 
-	storage := storage.NewMemoryStorage([]*types.Course{{Id: 0, Name: "German"}}, 1)
+	storage := storage.NewMemoryStorage([]*types.Course{{Id: 0, Name: "German"}})
 	template, _ := template.New("homepage").Parse("{{.Id}} {{.Name}}")
 
 	routes.DetailedCourse(storage, template)(w, req)
