@@ -13,7 +13,7 @@ import (
 	"wordfulness/types"
 )
 
-func TestHomePageGET(t *testing.T) {
+func TestHomePage(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()
 
@@ -28,7 +28,7 @@ func TestHomePageGET(t *testing.T) {
 	}
 }
 
-func TestHomePagePOST(t *testing.T) {
+func TestCreateCourse(t *testing.T) {
 	form := url.Values{}
 	form.Add("name", "Spanish")
 
@@ -49,7 +49,6 @@ func TestHomePagePOST(t *testing.T) {
 
 func TestExistingDetailedCourse(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/course?id=0", nil)
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	w := httptest.NewRecorder()
 
 	storage := storage.NewMemoryStorage([]*types.Course{{Id: 0, Name: "German"}}, 1)
