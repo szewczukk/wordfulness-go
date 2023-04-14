@@ -38,3 +38,23 @@ func (s *MemoryStorage) CreateCourse(name string) error {
 	s.courses = append(s.courses, &types.Course{Id: len(s.courses), Name: name})
 	return nil
 }
+
+func (s *MemoryStorage) DeleteCourse(id int64) error {
+	filteredCourses := []*types.Course{}
+	courseExists := false
+
+	for _, course := range s.courses {
+		if course.Id == int(id) {
+			filteredCourses = append(filteredCourses, course)
+			courseExists = true
+		}
+	}
+
+	if !courseExists {
+		return errors.New("not found")
+	}
+
+	s.courses = filteredCourses
+
+	return nil
+}

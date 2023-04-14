@@ -76,3 +76,27 @@ func TestGetCourseReturnsError(t *testing.T) {
 		t.Errorf("Invalid error, got: %v", err)
 	}
 }
+
+func TestDeleteCourseReturnsNil(t *testing.T) {
+	storage := storage.NewMemoryStorage([]*types.Course{{Id: 0, Name: "Spanish"}})
+
+	err := storage.DeleteCourse(0)
+
+	if err != nil {
+		t.Errorf("Error occurred: %v", err)
+	}
+}
+
+func TestDeleteCourseReturnsNotFoundError(t *testing.T) {
+	storage := storage.NewMemoryStorage([]*types.Course{})
+
+	err := storage.DeleteCourse(0)
+
+	if err == nil {
+		t.Error("Error didn't occurr")
+	}
+
+	if err.Error() != "not found" {
+		t.Errorf("Wrong error returned, got: %v", err)
+	}
+}
