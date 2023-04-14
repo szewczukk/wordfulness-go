@@ -61,3 +61,17 @@ func TestExistingDetailedCourse(t *testing.T) {
 		t.Errorf("Wrong body returned %v", result)
 	}
 }
+
+func TestDeleteExistingCourse(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "/delete-course?id=0", nil)
+	w := httptest.NewRecorder()
+
+	storage := storage.NewMemoryStorage([]*types.Course{{Id: 0, Name: "German"}})
+
+	routes.DeleteCourse(storage)(w, req)
+
+	result := w.Result().StatusCode
+	if result != 308 {
+		t.Errorf("Wrong status code returned, got: %v", result)
+	}
+}
