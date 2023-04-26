@@ -2,7 +2,6 @@ package routes
 
 import (
 	"html/template"
-	"log"
 	"net/http"
 	"strconv"
 	"wordfulness/types"
@@ -16,7 +15,8 @@ func HomePage(storage HomePageStorage, template *template.Template) http.Handler
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		courses, err := storage.GetAllCourses()
 		if err != nil {
-			log.Fatal(err)
+			http.Error(w, err.Error(), 400)
+			return
 		}
 
 		template.Execute(w, courses)
@@ -36,12 +36,14 @@ func CreateCourse(storage CreateCourseStorage, template *template.Template) http
 
 		err := storage.CreateCourse(name)
 		if err != nil {
-			log.Fatal(err)
+			http.Error(w, err.Error(), 400)
+			return
 		}
 
 		courses, err := storage.GetAllCourses()
 		if err != nil {
-			log.Fatal(err)
+			http.Error(w, err.Error(), 404)
+			return
 		}
 
 		template.Execute(w, courses)
@@ -58,12 +60,14 @@ func DetailedCourse(storage DetailedCourseStorage, template *template.Template) 
 
 		parsedId, err := strconv.ParseInt(id, 10, 32)
 		if err != nil {
-			log.Fatal(err)
+			http.Error(w, err.Error(), 400)
+			return
 		}
 
 		course, err := storage.GetCourse(parsedId)
 		if err != nil {
-			log.Fatal(err)
+			http.Error(w, err.Error(), 404)
+			return
 		}
 
 		template.Execute(w, course)
@@ -80,12 +84,14 @@ func DeleteCourse(storage DeleteCourseStorage) http.HandlerFunc {
 
 		parsedId, err := strconv.ParseInt(id, 10, 32)
 		if err != nil {
-			log.Fatal(err)
+			http.Error(w, err.Error(), 400)
+			return
 		}
 
 		err = storage.DeleteCourse(parsedId)
 		if err != nil {
-			log.Fatal(err)
+			http.Error(w, err.Error(), 404)
+			return
 		}
 
 		http.Redirect(w, r, "/", http.StatusPermanentRedirect)

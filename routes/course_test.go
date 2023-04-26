@@ -1,6 +1,7 @@
 package routes_test
 
 import (
+	"errors"
 	"html/template"
 	"net/http"
 	"net/http/httptest"
@@ -13,6 +14,12 @@ import (
 	"wordfulness/types"
 )
 
+type ErrorStorage struct{}
+
+func (s *ErrorStorage) GetAllCourses() ([]*types.Course, error) {
+	return nil, errors.New("error")
+}
+
 func TestHomePage(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()
@@ -22,9 +29,31 @@ func TestHomePage(t *testing.T) {
 
 	routes.HomePage(storage, template)(w, req)
 
-	result := w.Body.String()
-	if result != "0 German" {
-		t.Errorf("Wrong body returned %v", result)
+	body := w.Body.String()
+
+	if body != "0 German" {
+		t.Errorf("Wrong body returned %v", body)
+	}
+}
+
+func TestErrorOnHomePage(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	w := httptest.NewRecorder()
+
+	storage := &ErrorStorage{}
+	template, _ := template.New("homepage").Parse("{{range .}}{{.Id}} {{.Name}}{{end}}")
+
+	routes.HomePage(storage, template)(w, req)
+
+	statusCode := w.Result().StatusCode
+	body := w.Body.String()
+
+	if body != "error\n" {
+		t.Errorf("Wrong body returned %v", body)
+	}
+
+	if statusCode != 400 {
+		t.Errorf("Wrong status code returned %v", statusCode)
 	}
 }
 
@@ -41,9 +70,10 @@ func TestCreateCourse(t *testing.T) {
 
 	routes.CreateCourse(storage, template)(w, req)
 
-	result := w.Body.String()
-	if result != "0 German 1 Spanish " {
-		t.Errorf("Wrong body returned %v", result)
+	body := w.Body.String()
+
+	if body != "0 German 1 Spanish " {
+		t.Errorf("Wrong body returned %v", body)
 	}
 }
 
@@ -56,9 +86,10 @@ func TestExistingDetailedCourse(t *testing.T) {
 
 	routes.DetailedCourse(storage, template)(w, req)
 
-	result := w.Body.String()
-	if result != "0 German" {
-		t.Errorf("Wrong body returned %v", result)
+	body := w.Body.String()
+
+	if body != "0 German" {
+		t.Errorf("Wrong body returned %v", body)
 	}
 }
 
@@ -70,8 +101,9 @@ func TestDeleteExistingCourse(t *testing.T) {
 
 	routes.DeleteCourse(storage)(w, req)
 
-	result := w.Result().StatusCode
-	if result != 308 {
-		t.Errorf("Wrong status code returned, got: %v", result)
+	body := w.Result().StatusCode
+
+	if body != 308 {
+		t.Errorf("Wrong status code returned, got: %v", body)
 	}
 }
