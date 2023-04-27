@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"wordfulness/core"
 	"wordfulness/routes"
 	"wordfulness/storage"
 
@@ -29,12 +30,12 @@ func main() {
 		"templates/course.html",
 	))
 
-	router := routes.NewRouter()
+	router := core.NewRouter()
 
-	router.GET("/", routes.HomePage(storage, homePageTemplate))
-	router.POST("/", routes.CreateCourse(storage, homePageTemplate))
-	router.GET("/courses", routes.DetailedCourse(storage, courseTemplate))
-	router.GET("/delete-course", routes.DeleteCourse(storage))
+	router.Get("/", routes.HomePage(storage, homePageTemplate))
+	router.Post("/", routes.CreateCourse(storage, homePageTemplate))
+	router.Get("/courses", routes.DetailedCourse(storage, courseTemplate))
+	router.Get("/delete-course", routes.DeleteCourse(storage))
 
 	fs := http.FileServer(http.Dir("./static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))

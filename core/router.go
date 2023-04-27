@@ -1,4 +1,4 @@
-package routes
+package core
 
 import (
 	"net/http"
@@ -14,7 +14,7 @@ func NewRouter() *Router {
 	}
 }
 
-func (server *Router) GET(endpoint string, handler http.HandlerFunc) {
+func (server *Router) Get(endpoint string, handler http.HandlerFunc) {
 	_, exists := server.routes[endpoint]
 	if !exists {
 		server.routes[endpoint] = make(map[string]http.HandlerFunc)
@@ -23,7 +23,7 @@ func (server *Router) GET(endpoint string, handler http.HandlerFunc) {
 	server.routes[endpoint][http.MethodGet] = handler
 }
 
-func (server *Router) POST(endpoint string, handler http.HandlerFunc) {
+func (server *Router) Post(endpoint string, handler http.HandlerFunc) {
 	_, exists := server.routes[endpoint]
 	if !exists {
 		server.routes[endpoint] = make(map[string]http.HandlerFunc)
