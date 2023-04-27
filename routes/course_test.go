@@ -127,6 +127,48 @@ func TestExistingDetailedCourse(t *testing.T) {
 	}
 }
 
+func TestExistingDetailedCourseWithInvalidId(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "/course?id=a", nil)
+	w := httptest.NewRecorder()
+
+	storage := storage.NewMemoryStorage([]*types.Course{{Id: 0, Name: "German"}})
+	template, _ := template.New("homepage").Parse("{{.Id}} {{.Name}}")
+
+	routes.DetailedCourse(storage, template)(w, req)
+
+	body := w.Body.String()
+	statusCode := w.Result().StatusCode
+
+	if body != "strconv.ParseInt: parsing \"a\": invalid syntax\n" {
+		t.Errorf("Wrong body returned %v", body)
+	}
+
+	if statusCode != 400 {
+		t.Errorf("Wrong status code, got: %v", statusCode)
+	}
+}
+
+func TestNonExistingDetailedCourse(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "/course?id=0", nil)
+	w := httptest.NewRecorder()
+
+	storage := storage.NewMemoryStorage([]*types.Course{})
+	template, _ := template.New("homepage").Parse("{{.Id}} {{.Name}}")
+
+	routes.DetailedCourse(storage, template)(w, req)
+
+	body := w.Body.String()
+	statusCode := w.Result().StatusCode
+
+	if body != "not found\n" {
+		t.Errorf("Wrong body returned %v", body)
+	}
+
+	if statusCode != 404 {
+		t.Errorf("Wrong status code, got: %v", statusCode)
+	}
+}
+
 func TestDeleteExistingCourse(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/delete-course?id=0", nil)
 	w := httptest.NewRecorder()
@@ -144,5 +186,45 @@ func TestDeleteExistingCourse(t *testing.T) {
 
 	if url.Path != "/" {
 		t.Errorf("Wrong redirection url, got: %v", statusCode)
+	}
+}
+
+func TestDeleteExistingCourseWithInvalidId(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "/delete-course?id=a", nil)
+	w := httptest.NewRecorder()
+
+	storage := storage.NewMemoryStorage([]*types.Course{{Id: 0, Name: "German"}})
+
+	routes.DeleteCourse(storage)(w, req)
+
+	statusCode := w.Result().StatusCode
+	body := w.Body.String()
+
+	if body != "strconv.ParseInt: parsing \"a\": invalid syntax\n" {
+		t.Errorf("Wrong body, got: %v", body)
+	}
+
+	if statusCode != 400 {
+		t.Errorf("Wrong status code, got: %v", statusCode)
+	}
+}
+
+func TestDeleteNonExistingCourse(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "/delete-course?id=0", nil)
+	w := httptest.NewRecorder()
+
+	storage := storage.NewMemoryStorage([]*types.Course{})
+
+	routes.DeleteCourse(storage)(w, req)
+
+	statusCode := w.Result().StatusCode
+	body := w.Body.String()
+
+	if body != "not found\n" {
+		t.Errorf("Wrong body, got: %v", body)
+	}
+
+	if statusCode != 404 {
+		t.Errorf("Wrong status code, got: %v", statusCode)
 	}
 }
