@@ -22,6 +22,12 @@ func (s *SequelStorage) Initialize() {
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			name VARCHAR(20) UNIQUE
 		);
+
+		CREATE TABLE IF NOT EXISTS users (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			username VARCHAR(20) UNIQUE,
+			password VARCHAR(20) UNIQUE
+		);
 	`
 
 	_, err := s.db.Exec(query)
@@ -86,6 +92,15 @@ func (s *SequelStorage) DeleteCourse(id int) error {
 
 func (s *SequelStorage) UpdateCourse(id int, name string) error {
 	_, err := s.db.Exec("UPDATE courses SET name = ? WHERE id = ?", name, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *SequelStorage) CreateUser(name string, password string) error {
+	_, err := s.db.Exec("INSERT INTO users (name, password) VALUES (?, ?)", name, password)
 	if err != nil {
 		return err
 	}
