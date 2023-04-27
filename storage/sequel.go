@@ -16,7 +16,7 @@ func NewSequelStorage(db *sql.DB) *SequelStorage {
 	}
 }
 
-func (storage *SequelStorage) Initialize() {
+func (s *SequelStorage) Initialize() {
 	query := `
 		CREATE TABLE IF NOT EXISTS courses (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -24,16 +24,16 @@ func (storage *SequelStorage) Initialize() {
 		);
 	`
 
-	_, err := storage.db.Exec(query)
+	_, err := s.db.Exec(query)
 	if err != nil {
 		log.Fatal(err)
 	}
 }
 
-func (storage *SequelStorage) GetAllCourses() ([]*types.Course, error) {
+func (s *SequelStorage) GetAllCourses() ([]*types.Course, error) {
 	var courses []*types.Course
 
-	rows, err := storage.db.Query("SELECT id, name FROM courses")
+	rows, err := s.db.Query("SELECT id, name FROM courses")
 	if err != nil {
 		return nil, err
 	}
@@ -54,8 +54,8 @@ func (storage *SequelStorage) GetAllCourses() ([]*types.Course, error) {
 	return courses, nil
 }
 
-func (storage *SequelStorage) GetCourse(id int) (*types.Course, error) {
-	row := storage.db.QueryRow("SELECT id, name FROM courses WHERE id = ?", id)
+func (s *SequelStorage) GetCourse(id int) (*types.Course, error) {
+	row := s.db.QueryRow("SELECT id, name FROM courses WHERE id = ?", id)
 
 	course := new(types.Course)
 	err := row.Scan(&course.Id, &course.Name)
@@ -66,8 +66,8 @@ func (storage *SequelStorage) GetCourse(id int) (*types.Course, error) {
 	return course, nil
 }
 
-func (storage *SequelStorage) CreateCourse(name string) error {
-	_, err := storage.db.Exec("INSERT INTO courses (name) VALUES (?)", name)
+func (s *SequelStorage) CreateCourse(name string) error {
+	_, err := s.db.Exec("INSERT INTO courses (name) VALUES (?)", name)
 	if err != nil {
 		return err
 	}
@@ -75,8 +75,17 @@ func (storage *SequelStorage) CreateCourse(name string) error {
 	return nil
 }
 
-func (storage *SequelStorage) DeleteCourse(id int) error {
-	_, err := storage.db.Exec("DELETE FROM courses WHERE id = ?", id)
+func (s *SequelStorage) DeleteCourse(id int) error {
+	_, err := s.db.Exec("DELETE FROM courses WHERE id = ?", id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *SequelStorage) UpdateCourse(id int, name string) error {
+	_, err := s.db.Exec("UPDATE courses SET name = ? WHERE id = ?", name, id)
 	if err != nil {
 		return err
 	}

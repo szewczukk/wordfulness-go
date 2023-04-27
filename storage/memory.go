@@ -58,3 +58,23 @@ func (s *MemoryStorage) DeleteCourse(id int) error {
 
 	return nil
 }
+
+func (s *MemoryStorage) UpdateCourse(id int, name string) error {
+	isChanged := false
+	for _, course := range s.courses {
+		if course.Name == name {
+			return errors.New("duplicate")
+		}
+
+		if course.Id == id {
+			course.Name = name
+			isChanged = true
+		}
+	}
+
+	if !isChanged {
+		return errors.New("not found")
+	}
+
+	return nil
+}

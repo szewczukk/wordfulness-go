@@ -124,3 +124,41 @@ func TestDeleteCourseReturnsNotFoundError(t *testing.T) {
 		t.Errorf("Wrong error returned, got: %v", err)
 	}
 }
+
+func TestUpdateCourse(t *testing.T) {
+	storage := storage.NewMemoryStorage([]*types.Course{{Id: 0, Name: "Spanish"}})
+
+	err := storage.UpdateCourse(0, "German")
+
+	if err != nil {
+		t.Errorf("Error: %v", err)
+	}
+}
+
+func TestUpdateCourseReturnsDuplicateError(t *testing.T) {
+	storage := storage.NewMemoryStorage([]*types.Course{{Id: 0, Name: "German"}, {Id: 1, Name: "Spanish"}})
+
+	err := storage.UpdateCourse(1, "German")
+
+	if err == nil {
+		t.Error("Error didn't occurr")
+	}
+
+	if err.Error() != "duplicate" {
+		t.Errorf("Wrong error returned, got: %v", err)
+	}
+}
+
+func TestUpdateCourseReturnsNotFoundError(t *testing.T) {
+	storage := storage.NewMemoryStorage([]*types.Course{})
+
+	err := storage.UpdateCourse(0, "German")
+
+	if err == nil {
+		t.Error("Error didn't occurr")
+	}
+
+	if err.Error() != "not found" {
+		t.Errorf("Wrong error returned, got: %v", err)
+	}
+}
