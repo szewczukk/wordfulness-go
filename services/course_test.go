@@ -1,4 +1,4 @@
-package routes_test
+package services_test
 
 import (
 	"errors"
@@ -9,7 +9,7 @@ import (
 	"strings"
 	"testing"
 
-	"wordfulness/routes"
+	"wordfulness/services"
 	"wordfulness/storage"
 	"wordfulness/types"
 )
@@ -41,7 +41,7 @@ func TestHomePage(t *testing.T) {
 	templates := map[string]*template.Template{
 		"HomePage": temp,
 	}
-	coursesController := routes.NewCoursesController(storage, templates)
+	coursesController := services.NewCoursesService(storage, templates)
 
 	coursesController.HomePage(w, req)
 
@@ -61,7 +61,7 @@ func TestErrorOnHomePage(t *testing.T) {
 	templates := map[string]*template.Template{
 		"HomePage": temp,
 	}
-	coursesController := routes.NewCoursesController(storage, templates)
+	coursesController := services.NewCoursesService(storage, templates)
 
 	coursesController.HomePage(w, req)
 
@@ -87,7 +87,7 @@ func TestCreateCourse(t *testing.T) {
 
 	storage := storage.NewMemoryStorage([]*types.Course{{Id: 0, Name: "German"}})
 	templates := map[string]*template.Template{}
-	coursesController := routes.NewCoursesController(storage, templates)
+	coursesController := services.NewCoursesService(storage, templates)
 
 	coursesController.CreateCourse(w, req)
 
@@ -113,7 +113,7 @@ func TestCreateCourseWithErrorStorage(t *testing.T) {
 
 	storage := &ErrorStorage{}
 	templates := map[string]*template.Template{}
-	coursesController := routes.NewCoursesController(storage, templates)
+	coursesController := services.NewCoursesService(storage, templates)
 
 	coursesController.CreateCourse(w, req)
 
@@ -138,7 +138,7 @@ func TestExistingDetailedCourse(t *testing.T) {
 	templates := map[string]*template.Template{
 		"DetailedCourse": temp,
 	}
-	coursesController := routes.NewCoursesController(storage, templates)
+	coursesController := services.NewCoursesService(storage, templates)
 
 	coursesController.DetailedCourse(w, req)
 
@@ -158,7 +158,7 @@ func TestExistingDetailedCourseWithInvalidId(t *testing.T) {
 	templates := map[string]*template.Template{
 		"DetailedCourse": temp,
 	}
-	coursesController := routes.NewCoursesController(storage, templates)
+	coursesController := services.NewCoursesService(storage, templates)
 
 	coursesController.DetailedCourse(w, req)
 
@@ -183,7 +183,7 @@ func TestNonExistingDetailedCourse(t *testing.T) {
 	templates := map[string]*template.Template{
 		"DetailedCourse": temp,
 	}
-	coursesController := routes.NewCoursesController(storage, templates)
+	coursesController := services.NewCoursesService(storage, templates)
 
 	coursesController.DetailedCourse(w, req)
 
@@ -205,7 +205,7 @@ func TestDeleteExistingCourse(t *testing.T) {
 
 	storage := storage.NewMemoryStorage([]*types.Course{{Id: 0, Name: "German"}})
 	templates := map[string]*template.Template{}
-	coursesController := routes.NewCoursesController(storage, templates)
+	coursesController := services.NewCoursesService(storage, templates)
 
 	coursesController.DeleteCourse(w, req)
 
@@ -227,7 +227,7 @@ func TestDeleteExistingCourseWithInvalidId(t *testing.T) {
 
 	storage := storage.NewMemoryStorage([]*types.Course{{Id: 0, Name: "German"}})
 	templates := map[string]*template.Template{}
-	coursesController := routes.NewCoursesController(storage, templates)
+	coursesController := services.NewCoursesService(storage, templates)
 
 	coursesController.DeleteCourse(w, req)
 
@@ -249,7 +249,7 @@ func TestDeleteNonExistingCourse(t *testing.T) {
 
 	storage := storage.NewMemoryStorage([]*types.Course{})
 	templates := map[string]*template.Template{}
-	coursesController := routes.NewCoursesController(storage, templates)
+	coursesController := services.NewCoursesService(storage, templates)
 
 	coursesController.DeleteCourse(w, req)
 

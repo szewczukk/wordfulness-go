@@ -1,4 +1,4 @@
-package routes
+package services
 
 import (
 	"html/template"
@@ -14,37 +14,37 @@ type CoursesStorage interface {
 	DeleteCourse(int) error
 }
 
-type CoursesController struct {
+type CoursesService struct {
 	storage   CoursesStorage
 	templates map[string]*template.Template
 }
 
-func NewCoursesController(
+func NewCoursesService(
 	storage CoursesStorage,
 	templates map[string]*template.Template,
-) *CoursesController {
-	return &CoursesController{
+) *CoursesService {
+	return &CoursesService{
 		storage:   storage,
 		templates: templates,
 	}
 }
 
-func (c *CoursesController) HomePage(w http.ResponseWriter, r *http.Request) {
-	courses, err := c.storage.GetAllCourses()
+func (s *CoursesService) HomePage(w http.ResponseWriter, r *http.Request) {
+	courses, err := s.storage.GetAllCourses()
 	if err != nil {
 		http.Error(w, err.Error(), 400)
 		return
 	}
 
-	c.templates["HomePage"].Execute(w, courses)
+	s.templates["HomePage"].Execute(w, courses)
 }
 
-func (c *CoursesController) CreateCourse(w http.ResponseWriter, r *http.Request) {
+func (s *CoursesService) CreateCourse(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 
 	name := r.Form.Get("name")
 
-	err := c.storage.CreateCourse(name)
+	err := s.storage.CreateCourse(name)
 	if err != nil {
 		http.Error(w, err.Error(), 400)
 		return
@@ -53,7 +53,7 @@ func (c *CoursesController) CreateCourse(w http.ResponseWriter, r *http.Request)
 	http.Redirect(w, r, "/", http.StatusPermanentRedirect)
 }
 
-func (c *CoursesController) DetailedCourse(w http.ResponseWriter, r *http.Request) {
+func (s *CoursesService) DetailedCourse(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
 
 	parsedId, err := strconv.ParseInt(id, 10, 32)
@@ -62,16 +62,16 @@ func (c *CoursesController) DetailedCourse(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	course, err := c.storage.GetCourse(int(parsedId))
+	course, err := s.storage.GetCourse(int(parsedId))
 	if err != nil {
 		http.Error(w, err.Error(), 404)
 		return
 	}
 
-	c.templates["DetailedCourse"].Execute(w, course)
+	s.templates["DetailedCourse"].Execute(w, course)
 }
 
-func (c *CoursesController) DeleteCourse(w http.ResponseWriter, r *http.Request) {
+func (s *CoursesService) DeleteCourse(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
 
 	parsedId, err := strconv.ParseInt(id, 10, 32)
@@ -80,7 +80,7 @@ func (c *CoursesController) DeleteCourse(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	err = c.storage.DeleteCourse(int(parsedId))
+	err = s.storage.DeleteCourse(int(parsedId))
 	if err != nil {
 		http.Error(w, err.Error(), 404)
 		return

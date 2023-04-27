@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 	"wordfulness/core"
-	"wordfulness/routes"
+	"wordfulness/services"
 	"wordfulness/storage"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -33,7 +33,7 @@ func main() {
 	}
 
 	router := core.NewRouter()
-	coursesController := routes.NewCoursesController(storage, templates)
+	coursesController := services.NewCoursesService(storage, templates)
 
 	router.Get("/", coursesController.HomePage)
 	router.Post("/", coursesController.CreateCourse)
