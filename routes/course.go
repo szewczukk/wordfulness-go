@@ -7,6 +7,88 @@ import (
 	"wordfulness/types"
 )
 
+type CoursesStorage interface {
+	GetAllCourses() ([]*types.Course, error)
+	GetCourse(int) (*types.Course, error)
+	CreateCourse(string) error
+	DeleteCourse(int) error
+}
+
+type CoursesController struct {
+	storage   CoursesStorage
+	templates map[string]*template.Template
+}
+
+func NewCoursesController(
+	storage CoursesStorage,
+	templates map[string]*template.Template,
+) *CoursesController {
+	return &CoursesController{
+		storage:   storage,
+		templates: templates,
+	}
+}
+
+func (c *CoursesController) HomePage(w http.ResponseWriter, r *http.Request) {
+	courses, err := c.storage.GetAllCourses()
+	if err != nil {
+		http.Error(w, err.Error(), 400)
+		return
+	}
+
+	c.templates["HomePage"].Execute(w, courses)
+}
+
+func (c *CoursesController) CreateCourse(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+
+	name := r.Form.Get("name")
+
+	err := c.storage.CreateCourse(name)
+	if err != nil {
+		http.Error(w, err.Error(), 400)
+		return
+	}
+
+	http.Redirect(w, r, "/", http.StatusPermanentRedirect)
+}
+
+func (c *CoursesController) DetailedCourse(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+
+	parsedId, err := strconv.ParseInt(id, 10, 32)
+	if err != nil {
+		http.Error(w, err.Error(), 400)
+		return
+	}
+
+	course, err := c.storage.GetCourse(int(parsedId))
+	if err != nil {
+		http.Error(w, err.Error(), 404)
+		return
+	}
+
+	c.templates["DetailedCourse"].Execute(w, course)
+}
+
+func (c *CoursesController) DeleteCourse(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+
+	parsedId, err := strconv.ParseInt(id, 10, 32)
+	if err != nil {
+		http.Error(w, err.Error(), 400)
+		return
+	}
+
+	err = c.storage.DeleteCourse(int(parsedId))
+	if err != nil {
+		http.Error(w, err.Error(), 404)
+		return
+	}
+
+	http.Redirect(w, r, "/", http.StatusPermanentRedirect)
+}
+
 type HomePageStorage interface {
 	GetAllCourses() ([]*types.Course, error)
 }

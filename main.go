@@ -21,21 +21,24 @@ func main() {
 	storage := &storage.SequelStorage{Db: db}
 	storage.Initialize()
 
-	homePageTemplate := template.Must(template.ParseFiles(
-		"templates/layout.html",
-		"templates/homepage.html",
-	))
-	courseTemplate := template.Must(template.ParseFiles(
-		"templates/layout.html",
-		"templates/course.html",
-	))
+	templates := map[string]*template.Template{
+		"HomePage": template.Must(template.ParseFiles(
+			"templates/layout.html",
+			"templates/homepage.html",
+		)),
+		"DetailedCourse": template.Must(template.ParseFiles(
+			"templates/layout.html",
+			"templates/course.html",
+		)),
+	}
 
 	router := core.NewRouter()
+	coursesController := routes.NewCoursesController(storage, templates)
 
-	router.Get("/", routes.HomePage(storage, homePageTemplate))
-	router.Post("/", routes.CreateCourse(storage, homePageTemplate))
-	router.Get("/courses", routes.DetailedCourse(storage, courseTemplate))
-	router.Get("/delete-course", routes.DeleteCourse(storage))
+	router.Get("/", coursesController.HomePage)
+	router.Post("/", coursesController.CreateCourse)
+	router.Get("/courses", coursesController.DetailedCourse)
+	router.Get("/delete-course", coursesController.DeleteCourse)
 
 	fs := http.FileServer(http.Dir("./static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
