@@ -5,21 +5,21 @@ import (
 	"wordfulness/types"
 )
 
-type MemoryStorage struct {
+type CourseMemoryStorage struct {
 	courses []*types.Course
 }
 
-func NewMemoryStorage(courses []*types.Course) *MemoryStorage {
-	return &MemoryStorage{
+func NewMemoryStorage(courses []*types.Course) *CourseMemoryStorage {
+	return &CourseMemoryStorage{
 		courses: courses,
 	}
 }
 
-func (s *MemoryStorage) GetAllCourses() ([]*types.Course, error) {
+func (s *CourseMemoryStorage) GetAllCourses() ([]*types.Course, error) {
 	return s.courses, nil
 }
 
-func (s *MemoryStorage) GetCourse(id int) (*types.Course, error) {
+func (s *CourseMemoryStorage) GetCourse(id int) (*types.Course, error) {
 	for _, course := range s.courses {
 		if course.Id == id {
 			return course, nil
@@ -29,7 +29,7 @@ func (s *MemoryStorage) GetCourse(id int) (*types.Course, error) {
 	return nil, errors.New("not found")
 }
 
-func (s *MemoryStorage) CreateCourse(name string) error {
+func (s *CourseMemoryStorage) CreateCourse(name string) error {
 	for _, course := range s.courses {
 		if course.Name == name {
 			return errors.New("duplicate")
@@ -39,7 +39,7 @@ func (s *MemoryStorage) CreateCourse(name string) error {
 	return nil
 }
 
-func (s *MemoryStorage) DeleteCourse(id int) error {
+func (s *CourseMemoryStorage) DeleteCourse(id int) error {
 	filteredCourses := []*types.Course{}
 	courseExists := false
 
@@ -59,7 +59,7 @@ func (s *MemoryStorage) DeleteCourse(id int) error {
 	return nil
 }
 
-func (s *MemoryStorage) UpdateCourse(id int, name string) error {
+func (s *CourseMemoryStorage) UpdateCourse(id int, name string) error {
 	isChanged := false
 	for _, course := range s.courses {
 		if course.Name == name {
