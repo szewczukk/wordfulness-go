@@ -15,21 +15,24 @@ func NewRouter() *Router {
 }
 
 func (r *Router) Get(endpoint string, handler http.HandlerFunc) {
-	_, exists := r.routes[endpoint]
-	if !exists {
-		r.routes[endpoint] = make(map[string]http.HandlerFunc)
-	}
-
-	r.routes[endpoint][http.MethodGet] = handler
+	r.createEndPointSliceIfNotExists(endpoint)
+	r.addEndPoint(endpoint, http.MethodGet, handler)
 }
 
 func (r *Router) Post(endpoint string, handler http.HandlerFunc) {
+	r.createEndPointSliceIfNotExists(endpoint)
+	r.addEndPoint(endpoint, http.MethodPost, handler)
+}
+
+func (r *Router) createEndPointSliceIfNotExists(endpoint string) {
 	_, exists := r.routes[endpoint]
 	if !exists {
 		r.routes[endpoint] = make(map[string]http.HandlerFunc)
 	}
+}
 
-	r.routes[endpoint][http.MethodPost] = handler
+func (r *Router) addEndPoint(endpoint string, method string, handler http.HandlerFunc) {
+	r.routes[endpoint][method] = handler
 }
 
 func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
