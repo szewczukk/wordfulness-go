@@ -50,7 +50,7 @@ func (s *CoursesService) CreateCourse(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/", http.StatusPermanentRedirect)
+	http.Redirect(w, r, "/", http.StatusMovedPermanently)
 }
 
 func (s *CoursesService) DetailedCourse(w http.ResponseWriter, r *http.Request) {
@@ -86,5 +86,5 @@ func (s *CoursesService) DeleteCourse(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/", http.StatusPermanentRedirect)
+	http.Redirect(w, r, "/", http.StatusMovedPermanently)
 }

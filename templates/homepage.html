@@ -1,6 +1,4 @@
 {{define "content"}}
-<h1>Hello, world!</h1>
-
 <ul>
   {{range .}}
 
@@ -11,7 +9,7 @@
   {{end}}
 </ul>
 
-<form action="/" method="POST">
+<form action="/create-course" method="POST">
   <div class="grid">
     <input
       type="text"

@@ -36,7 +36,7 @@ func main() {
 	coursesController := services.NewCoursesService(storage, templates)
 
 	router.Get("/", coursesController.HomePage)
-	router.Post("/", coursesController.CreateCourse)
+	router.Post("/create-course", coursesController.CreateCourse)
 	router.Get("/courses", coursesController.DetailedCourse)
 	router.Get("/delete-course", coursesController.DeleteCourse)
 

@@ -94,7 +94,7 @@ func TestCreateCourse(t *testing.T) {
 	statusCode := w.Result().StatusCode
 	url, _ := w.Result().Location()
 
-	if statusCode != 308 {
+	if statusCode != 301 {
 		t.Errorf("Wrong status code returned, got: %v", statusCode)
 	}
 
@@ -212,7 +212,7 @@ func TestDeleteExistingCourse(t *testing.T) {
 	statusCode := w.Result().StatusCode
 	url, _ := w.Result().Location()
 
-	if statusCode != 308 {
+	if statusCode != 301 {
 		t.Errorf("Wrong status code returned, got: %v", statusCode)
 	}
 
