@@ -9,7 +9,7 @@ type CourseMemoryStorage struct {
 	courses []*types.Course
 }
 
-func NewMemoryStorage(courses []*types.Course) *CourseMemoryStorage {
+func NewCourseMemoryStorage(courses []*types.Course) *CourseMemoryStorage {
 	return &CourseMemoryStorage{
 		courses: courses,
 	}

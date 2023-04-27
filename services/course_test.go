@@ -40,7 +40,7 @@ func TestHomePage(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()
 
-	storage := storage.NewMemoryStorage([]*types.Course{{Id: 0, Name: "German"}})
+	storage := storage.NewCourseMemoryStorage([]*types.Course{{Id: 0, Name: "German"}})
 	temp, _ := template.New("homepage").Parse("{{range .}}{{.Id}} {{.Name}}{{end}}")
 	templates := map[string]*template.Template{
 		"HomePage": temp,
@@ -89,7 +89,7 @@ func TestCreateCourse(t *testing.T) {
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	w := httptest.NewRecorder()
 
-	storage := storage.NewMemoryStorage([]*types.Course{{Id: 0, Name: "German"}})
+	storage := storage.NewCourseMemoryStorage([]*types.Course{{Id: 0, Name: "German"}})
 	templates := map[string]*template.Template{}
 	service := services.NewCoursesService(storage, templates)
 
@@ -137,7 +137,7 @@ func TestDetailedCourse(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/course?id=0", nil)
 	w := httptest.NewRecorder()
 
-	storage := storage.NewMemoryStorage([]*types.Course{{Id: 0, Name: "German"}})
+	storage := storage.NewCourseMemoryStorage([]*types.Course{{Id: 0, Name: "German"}})
 	temp, _ := template.New("homepage").Parse("{{.Id}} {{.Name}}")
 	templates := map[string]*template.Template{
 		"DetailedCourse": temp,
@@ -157,7 +157,7 @@ func TestDetailedCourseInvalidId(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/course?id=a", nil)
 	w := httptest.NewRecorder()
 
-	storage := storage.NewMemoryStorage([]*types.Course{{Id: 0, Name: "German"}})
+	storage := storage.NewCourseMemoryStorage([]*types.Course{{Id: 0, Name: "German"}})
 	temp, _ := template.New("homepage").Parse("{{.Id}} {{.Name}}")
 	templates := map[string]*template.Template{
 		"DetailedCourse": temp,
@@ -182,7 +182,7 @@ func TestDetailedCourseNotFound(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/course?id=0", nil)
 	w := httptest.NewRecorder()
 
-	storage := storage.NewMemoryStorage([]*types.Course{})
+	storage := storage.NewCourseMemoryStorage([]*types.Course{})
 	temp, _ := template.New("homepage").Parse("{{.Id}} {{.Name}}")
 	templates := map[string]*template.Template{
 		"DetailedCourse": temp,
@@ -207,7 +207,7 @@ func TestDeleteCourse(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/delete-course?id=0", nil)
 	w := httptest.NewRecorder()
 
-	storage := storage.NewMemoryStorage([]*types.Course{{Id: 0, Name: "German"}})
+	storage := storage.NewCourseMemoryStorage([]*types.Course{{Id: 0, Name: "German"}})
 	templates := map[string]*template.Template{}
 	service := services.NewCoursesService(storage, templates)
 
@@ -229,7 +229,7 @@ func TestDeleteCourseInvalidId(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/delete-course?id=a", nil)
 	w := httptest.NewRecorder()
 
-	storage := storage.NewMemoryStorage([]*types.Course{{Id: 0, Name: "German"}})
+	storage := storage.NewCourseMemoryStorage([]*types.Course{{Id: 0, Name: "German"}})
 	templates := map[string]*template.Template{}
 	service := services.NewCoursesService(storage, templates)
 
@@ -251,7 +251,7 @@ func TestDeleteCourseNotFound(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/delete-course?id=0", nil)
 	w := httptest.NewRecorder()
 
-	storage := storage.NewMemoryStorage([]*types.Course{})
+	storage := storage.NewCourseMemoryStorage([]*types.Course{})
 	templates := map[string]*template.Template{}
 	service := services.NewCoursesService(storage, templates)
 
@@ -273,7 +273,7 @@ func TestUpdateCourseGet(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/update-course?id=0", nil)
 	w := httptest.NewRecorder()
 
-	storage := storage.NewMemoryStorage([]*types.Course{{Id: 0, Name: "Spanish"}})
+	storage := storage.NewCourseMemoryStorage([]*types.Course{{Id: 0, Name: "Spanish"}})
 	temp, _ := template.New("homepage").Parse("{{.Id}} {{.Name}}")
 	templates := map[string]*template.Template{
 		"UpdateCourse": temp,
@@ -293,7 +293,7 @@ func TestUpdateCouseGetNotFound(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/update-course?id=0", nil)
 	w := httptest.NewRecorder()
 
-	storage := storage.NewMemoryStorage([]*types.Course{})
+	storage := storage.NewCourseMemoryStorage([]*types.Course{})
 	temp, _ := template.New("homepage").Parse("{{.Id}} {{.Name}}")
 	templates := map[string]*template.Template{
 		"DetailedCourse": temp,
@@ -313,7 +313,7 @@ func TestUpdateCouseGetInvalidId(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/update-course?id=a", nil)
 	w := httptest.NewRecorder()
 
-	storage := storage.NewMemoryStorage([]*types.Course{})
+	storage := storage.NewCourseMemoryStorage([]*types.Course{})
 	temp, _ := template.New("homepage").Parse("{{.Id}} {{.Name}}")
 	templates := map[string]*template.Template{
 		"DetailedCourse": temp,
@@ -347,7 +347,7 @@ func TestUpdateCoursePost(t *testing.T) {
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	w := httptest.NewRecorder()
 
-	storage := storage.NewMemoryStorage([]*types.Course{{Id: 0, Name: "German"}})
+	storage := storage.NewCourseMemoryStorage([]*types.Course{{Id: 0, Name: "German"}})
 	templates := map[string]*template.Template{}
 	service := services.NewCoursesService(storage, templates)
 
@@ -391,7 +391,7 @@ func TestUpdateCoursePostInvalidId(t *testing.T) {
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	w := httptest.NewRecorder()
 
-	storage := storage.NewMemoryStorage([]*types.Course{{Id: 0, Name: "German"}})
+	storage := storage.NewCourseMemoryStorage([]*types.Course{{Id: 0, Name: "German"}})
 	templates := map[string]*template.Template{}
 	service := services.NewCoursesService(storage, templates)
 
@@ -423,7 +423,7 @@ func TestUpdateCoursePostNotFound(t *testing.T) {
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	w := httptest.NewRecorder()
 
-	storage := storage.NewMemoryStorage([]*types.Course{})
+	storage := storage.NewCourseMemoryStorage([]*types.Course{})
 	templates := map[string]*template.Template{}
 	service := services.NewCoursesService(storage, templates)
 
@@ -455,7 +455,7 @@ func TestUpdateCoursePostDuplicate(t *testing.T) {
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	w := httptest.NewRecorder()
 
-	storage := storage.NewMemoryStorage([]*types.Course{{Id: 0, Name: "Spanish"}, {Id: 1, Name: "German"}})
+	storage := storage.NewCourseMemoryStorage([]*types.Course{{Id: 0, Name: "Spanish"}, {Id: 1, Name: "German"}})
 	templates := map[string]*template.Template{}
 	service := services.NewCoursesService(storage, templates)
 

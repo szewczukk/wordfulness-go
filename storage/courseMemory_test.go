@@ -8,7 +8,7 @@ import (
 )
 
 func TestGetAllCoursesReturnsEmptySlice(t *testing.T) {
-	storage := storage.NewMemoryStorage([]*types.Course{})
+	storage := storage.NewCourseMemoryStorage([]*types.Course{})
 
 	courses, err := storage.GetAllCourses()
 
@@ -23,7 +23,7 @@ func TestGetAllCoursesReturnsEmptySlice(t *testing.T) {
 }
 
 func TestGetAllCoursesReturnsTwoElements(t *testing.T) {
-	storage := storage.NewMemoryStorage(
+	storage := storage.NewCourseMemoryStorage(
 		[]*types.Course{
 			{Id: 0, Name: "Spanish"}, {Id: 1, Name: "German"},
 		},
@@ -46,7 +46,7 @@ func TestGetAllCoursesReturnsTwoElements(t *testing.T) {
 }
 
 func TestGetCourseReturnsExistingCourse(t *testing.T) {
-	storage := storage.NewMemoryStorage(
+	storage := storage.NewCourseMemoryStorage(
 		[]*types.Course{
 			{Id: 0, Name: "Spanish"}, {Id: 1, Name: "German"},
 		},
@@ -64,7 +64,7 @@ func TestGetCourseReturnsExistingCourse(t *testing.T) {
 }
 
 func TestGetCourseReturnsError(t *testing.T) {
-	storage := storage.NewMemoryStorage([]*types.Course{})
+	storage := storage.NewCourseMemoryStorage([]*types.Course{})
 
 	course, err := storage.GetCourse(0)
 
@@ -78,7 +78,7 @@ func TestGetCourseReturnsError(t *testing.T) {
 }
 
 func TestCreateCourseReturnsNil(t *testing.T) {
-	storage := storage.NewMemoryStorage([]*types.Course{{}})
+	storage := storage.NewCourseMemoryStorage([]*types.Course{{}})
 
 	err := storage.CreateCourse("Spanish")
 
@@ -88,7 +88,7 @@ func TestCreateCourseReturnsNil(t *testing.T) {
 }
 
 func TestCreateCourseReturnsError(t *testing.T) {
-	storage := storage.NewMemoryStorage([]*types.Course{{Id: 0, Name: "Spanish"}})
+	storage := storage.NewCourseMemoryStorage([]*types.Course{{Id: 0, Name: "Spanish"}})
 
 	err := storage.CreateCourse("Spanish")
 
@@ -102,7 +102,7 @@ func TestCreateCourseReturnsError(t *testing.T) {
 }
 
 func TestDeleteCourseReturnsNil(t *testing.T) {
-	storage := storage.NewMemoryStorage([]*types.Course{{Id: 0, Name: "Spanish"}})
+	storage := storage.NewCourseMemoryStorage([]*types.Course{{Id: 0, Name: "Spanish"}})
 
 	err := storage.DeleteCourse(0)
 
@@ -112,7 +112,7 @@ func TestDeleteCourseReturnsNil(t *testing.T) {
 }
 
 func TestDeleteCourseReturnsNotFoundError(t *testing.T) {
-	storage := storage.NewMemoryStorage([]*types.Course{})
+	storage := storage.NewCourseMemoryStorage([]*types.Course{})
 
 	err := storage.DeleteCourse(0)
 
@@ -126,7 +126,7 @@ func TestDeleteCourseReturnsNotFoundError(t *testing.T) {
 }
 
 func TestUpdateCourse(t *testing.T) {
-	storage := storage.NewMemoryStorage([]*types.Course{{Id: 0, Name: "Spanish"}})
+	storage := storage.NewCourseMemoryStorage([]*types.Course{{Id: 0, Name: "Spanish"}})
 
 	err := storage.UpdateCourse(0, "German")
 
@@ -136,7 +136,7 @@ func TestUpdateCourse(t *testing.T) {
 }
 
 func TestUpdateCourseReturnsDuplicateError(t *testing.T) {
-	storage := storage.NewMemoryStorage([]*types.Course{{Id: 0, Name: "German"}, {Id: 1, Name: "Spanish"}})
+	storage := storage.NewCourseMemoryStorage([]*types.Course{{Id: 0, Name: "German"}, {Id: 1, Name: "Spanish"}})
 
 	err := storage.UpdateCourse(1, "German")
 
@@ -150,7 +150,7 @@ func TestUpdateCourseReturnsDuplicateError(t *testing.T) {
 }
 
 func TestUpdateCourseReturnsNotFoundError(t *testing.T) {
-	storage := storage.NewMemoryStorage([]*types.Course{})
+	storage := storage.NewCourseMemoryStorage([]*types.Course{})
 
 	err := storage.UpdateCourse(0, "German")
 
