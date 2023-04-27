@@ -45,9 +45,9 @@ func TestHomePage(t *testing.T) {
 	templates := map[string]*template.Template{
 		"HomePage": temp,
 	}
-	coursesController := services.NewCoursesService(storage, templates)
+	service := services.NewCoursesService(storage, templates)
 
-	coursesController.HomePage(w, req)
+	service.HomePage(w, req)
 
 	body := w.Body.String()
 
@@ -56,7 +56,7 @@ func TestHomePage(t *testing.T) {
 	}
 }
 
-func TestErrorOnHomePage(t *testing.T) {
+func TestHomePageError(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()
 
@@ -65,9 +65,9 @@ func TestErrorOnHomePage(t *testing.T) {
 	templates := map[string]*template.Template{
 		"HomePage": temp,
 	}
-	coursesController := services.NewCoursesService(storage, templates)
+	service := services.NewCoursesService(storage, templates)
 
-	coursesController.HomePage(w, req)
+	service.HomePage(w, req)
 
 	statusCode := w.Result().StatusCode
 	body := w.Body.String()
@@ -91,9 +91,9 @@ func TestCreateCourse(t *testing.T) {
 
 	storage := storage.NewMemoryStorage([]*types.Course{{Id: 0, Name: "German"}})
 	templates := map[string]*template.Template{}
-	coursesController := services.NewCoursesService(storage, templates)
+	service := services.NewCoursesService(storage, templates)
 
-	coursesController.CreateCourse(w, req)
+	service.CreateCourse(w, req)
 
 	statusCode := w.Result().StatusCode
 	url, _ := w.Result().Location()
@@ -107,7 +107,7 @@ func TestCreateCourse(t *testing.T) {
 	}
 }
 
-func TestCreateCourseWithErrorStorage(t *testing.T) {
+func TestCreateCourseError(t *testing.T) {
 	form := url.Values{}
 	form.Add("name", "Spanish")
 
@@ -117,9 +117,9 @@ func TestCreateCourseWithErrorStorage(t *testing.T) {
 
 	storage := &ErrorStorage{}
 	templates := map[string]*template.Template{}
-	coursesController := services.NewCoursesService(storage, templates)
+	service := services.NewCoursesService(storage, templates)
 
-	coursesController.CreateCourse(w, req)
+	service.CreateCourse(w, req)
 
 	body := w.Body.String()
 	statusCode := w.Result().StatusCode
@@ -133,7 +133,7 @@ func TestCreateCourseWithErrorStorage(t *testing.T) {
 	}
 }
 
-func TestExistingDetailedCourse(t *testing.T) {
+func TestDetailedCourse(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/course?id=0", nil)
 	w := httptest.NewRecorder()
 
@@ -142,9 +142,9 @@ func TestExistingDetailedCourse(t *testing.T) {
 	templates := map[string]*template.Template{
 		"DetailedCourse": temp,
 	}
-	coursesController := services.NewCoursesService(storage, templates)
+	service := services.NewCoursesService(storage, templates)
 
-	coursesController.DetailedCourse(w, req)
+	service.DetailedCourse(w, req)
 
 	body := w.Body.String()
 
@@ -153,7 +153,7 @@ func TestExistingDetailedCourse(t *testing.T) {
 	}
 }
 
-func TestExistingDetailedCourseWithInvalidId(t *testing.T) {
+func TestDetailedCourseInvalidId(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/course?id=a", nil)
 	w := httptest.NewRecorder()
 
@@ -162,9 +162,9 @@ func TestExistingDetailedCourseWithInvalidId(t *testing.T) {
 	templates := map[string]*template.Template{
 		"DetailedCourse": temp,
 	}
-	coursesController := services.NewCoursesService(storage, templates)
+	service := services.NewCoursesService(storage, templates)
 
-	coursesController.DetailedCourse(w, req)
+	service.DetailedCourse(w, req)
 
 	body := w.Body.String()
 	statusCode := w.Result().StatusCode
@@ -178,7 +178,7 @@ func TestExistingDetailedCourseWithInvalidId(t *testing.T) {
 	}
 }
 
-func TestNonExistingDetailedCourse(t *testing.T) {
+func TestDetailedCourseNotFound(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/course?id=0", nil)
 	w := httptest.NewRecorder()
 
@@ -187,9 +187,9 @@ func TestNonExistingDetailedCourse(t *testing.T) {
 	templates := map[string]*template.Template{
 		"DetailedCourse": temp,
 	}
-	coursesController := services.NewCoursesService(storage, templates)
+	service := services.NewCoursesService(storage, templates)
 
-	coursesController.DetailedCourse(w, req)
+	service.DetailedCourse(w, req)
 
 	body := w.Body.String()
 	statusCode := w.Result().StatusCode
@@ -203,15 +203,15 @@ func TestNonExistingDetailedCourse(t *testing.T) {
 	}
 }
 
-func TestDeleteExistingCourse(t *testing.T) {
+func TestDeleteCourse(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/delete-course?id=0", nil)
 	w := httptest.NewRecorder()
 
 	storage := storage.NewMemoryStorage([]*types.Course{{Id: 0, Name: "German"}})
 	templates := map[string]*template.Template{}
-	coursesController := services.NewCoursesService(storage, templates)
+	service := services.NewCoursesService(storage, templates)
 
-	coursesController.DeleteCourse(w, req)
+	service.DeleteCourse(w, req)
 
 	statusCode := w.Result().StatusCode
 	url, _ := w.Result().Location()
@@ -225,15 +225,15 @@ func TestDeleteExistingCourse(t *testing.T) {
 	}
 }
 
-func TestDeleteExistingCourseWithInvalidId(t *testing.T) {
+func TestDeleteCourseInvalidId(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/delete-course?id=a", nil)
 	w := httptest.NewRecorder()
 
 	storage := storage.NewMemoryStorage([]*types.Course{{Id: 0, Name: "German"}})
 	templates := map[string]*template.Template{}
-	coursesController := services.NewCoursesService(storage, templates)
+	service := services.NewCoursesService(storage, templates)
 
-	coursesController.DeleteCourse(w, req)
+	service.DeleteCourse(w, req)
 
 	statusCode := w.Result().StatusCode
 	body := w.Body.String()
@@ -247,15 +247,15 @@ func TestDeleteExistingCourseWithInvalidId(t *testing.T) {
 	}
 }
 
-func TestDeleteNonExistingCourse(t *testing.T) {
+func TestDeleteCourseNotFound(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/delete-course?id=0", nil)
 	w := httptest.NewRecorder()
 
 	storage := storage.NewMemoryStorage([]*types.Course{})
 	templates := map[string]*template.Template{}
-	coursesController := services.NewCoursesService(storage, templates)
+	service := services.NewCoursesService(storage, templates)
 
-	coursesController.DeleteCourse(w, req)
+	service.DeleteCourse(w, req)
 
 	statusCode := w.Result().StatusCode
 	body := w.Body.String()
@@ -269,7 +269,7 @@ func TestDeleteNonExistingCourse(t *testing.T) {
 	}
 }
 
-func TestGETUpdateCourse(t *testing.T) {
+func TestUpdateCourseGet(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/update-course?id=0", nil)
 	w := httptest.NewRecorder()
 
@@ -278,9 +278,9 @@ func TestGETUpdateCourse(t *testing.T) {
 	templates := map[string]*template.Template{
 		"UpdateCourse": temp,
 	}
-	coursesController := services.NewCoursesService(storage, templates)
+	service := services.NewCoursesService(storage, templates)
 
-	coursesController.UpdateCourseGET(w, req)
+	service.UpdateCourseGET(w, req)
 
 	body := w.Body.String()
 
@@ -289,7 +289,7 @@ func TestGETUpdateCourse(t *testing.T) {
 	}
 }
 
-func TestGETUpdateCourseNotExists(t *testing.T) {
+func TestUpdateCouseGetNotFound(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/update-course?id=0", nil)
 	w := httptest.NewRecorder()
 
@@ -298,9 +298,9 @@ func TestGETUpdateCourseNotExists(t *testing.T) {
 	templates := map[string]*template.Template{
 		"DetailedCourse": temp,
 	}
-	coursesController := services.NewCoursesService(storage, templates)
+	service := services.NewCoursesService(storage, templates)
 
-	coursesController.UpdateCourseGET(w, req)
+	service.UpdateCourseGET(w, req)
 
 	body := w.Body.String()
 
@@ -309,7 +309,7 @@ func TestGETUpdateCourseNotExists(t *testing.T) {
 	}
 }
 
-func TestPOSTUpdateCourse(t *testing.T) {
+func TestUpdateCoursePost(t *testing.T) {
 	form := url.Values{}
 	form.Add("name", "Spanish")
 
@@ -322,9 +322,9 @@ func TestPOSTUpdateCourse(t *testing.T) {
 
 	storage := storage.NewMemoryStorage([]*types.Course{{Id: 0, Name: "German"}})
 	templates := map[string]*template.Template{}
-	coursesController := services.NewCoursesService(storage, templates)
+	service := services.NewCoursesService(storage, templates)
 
-	coursesController.UpdateCoursePOST(w, req)
+	service.UpdateCoursePOST(w, req)
 
 	statusCode := w.Result().StatusCode
 	url, _ := w.Result().Location()
