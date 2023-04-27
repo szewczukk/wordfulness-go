@@ -19,9 +19,9 @@ func (s *MemoryStorage) GetAllCourses() ([]*types.Course, error) {
 	return s.courses, nil
 }
 
-func (s *MemoryStorage) GetCourse(id int64) (*types.Course, error) {
+func (s *MemoryStorage) GetCourse(id int) (*types.Course, error) {
 	for _, course := range s.courses {
-		if course.Id == int(id) {
+		if course.Id == id {
 			return course, nil
 		}
 	}
@@ -39,12 +39,12 @@ func (s *MemoryStorage) CreateCourse(name string) error {
 	return nil
 }
 
-func (s *MemoryStorage) DeleteCourse(id int64) error {
+func (s *MemoryStorage) DeleteCourse(id int) error {
 	filteredCourses := []*types.Course{}
 	courseExists := false
 
 	for _, course := range s.courses {
-		if course.Id == int(id) {
+		if course.Id == id {
 			filteredCourses = append(filteredCourses, course)
 			courseExists = true
 		}

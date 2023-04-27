@@ -45,7 +45,7 @@ func CreateCourse(storage CreateCourseStorage, template *template.Template) http
 }
 
 type DetailedCourseStorage interface {
-	GetCourse(int64) (*types.Course, error)
+	GetCourse(int) (*types.Course, error)
 }
 
 func DetailedCourse(storage DetailedCourseStorage, template *template.Template) http.HandlerFunc {
@@ -58,7 +58,7 @@ func DetailedCourse(storage DetailedCourseStorage, template *template.Template) 
 			return
 		}
 
-		course, err := storage.GetCourse(parsedId)
+		course, err := storage.GetCourse(int(parsedId))
 		if err != nil {
 			http.Error(w, err.Error(), 404)
 			return
@@ -69,7 +69,7 @@ func DetailedCourse(storage DetailedCourseStorage, template *template.Template) 
 }
 
 type DeleteCourseStorage interface {
-	DeleteCourse(int64) error
+	DeleteCourse(int) error
 }
 
 func DeleteCourse(storage DeleteCourseStorage) http.HandlerFunc {
@@ -82,7 +82,7 @@ func DeleteCourse(storage DeleteCourseStorage) http.HandlerFunc {
 			return
 		}
 
-		err = storage.DeleteCourse(parsedId)
+		err = storage.DeleteCourse(int(parsedId))
 		if err != nil {
 			http.Error(w, err.Error(), 404)
 			return

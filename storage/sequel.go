@@ -49,7 +49,7 @@ func (storage *SequelStorage) GetAllCourses() ([]*types.Course, error) {
 	return courses, nil
 }
 
-func (storage *SequelStorage) GetCourse(id int64) (*types.Course, error) {
+func (storage *SequelStorage) GetCourse(id int) (*types.Course, error) {
 	row := storage.Db.QueryRow("SELECT id, name FROM courses WHERE id = ?", id)
 
 	course := new(types.Course)
@@ -71,7 +71,7 @@ func (storage *SequelStorage) CreateCourse(name string) error {
 	return nil
 }
 
-func (storage *SequelStorage) DeleteCourse(id int64) error {
+func (storage *SequelStorage) DeleteCourse(id int) error {
 	_, err := storage.Db.Exec("DELETE FROM courses WHERE id = ?", id)
 
 	if err != nil {
