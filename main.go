@@ -18,7 +18,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	storage := &storage.SequelStorage{Db: db}
+	storage := storage.NewSequelStorage(db)
 	storage.Initialize()
 
 	templates := map[string]*template.Template{

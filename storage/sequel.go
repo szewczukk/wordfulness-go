@@ -7,7 +7,13 @@ import (
 )
 
 type SequelStorage struct {
-	Db *sql.DB
+	db *sql.DB
+}
+
+func NewSequelStorage(db *sql.DB) *SequelStorage {
+	return &SequelStorage{
+		db: db,
+	}
 }
 
 func (storage *SequelStorage) Initialize() {
@@ -18,7 +24,7 @@ func (storage *SequelStorage) Initialize() {
 		);
 	`
 
-	_, err := storage.Db.Exec(query)
+	_, err := storage.db.Exec(query)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -27,8 +33,7 @@ func (storage *SequelStorage) Initialize() {
 func (storage *SequelStorage) GetAllCourses() ([]*types.Course, error) {
 	var courses []*types.Course
 
-	rows, err := storage.Db.Query("SELECT id, name FROM courses")
-
+	rows, err := storage.db.Query("SELECT id, name FROM courses")
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +55,7 @@ func (storage *SequelStorage) GetAllCourses() ([]*types.Course, error) {
 }
 
 func (storage *SequelStorage) GetCourse(id int) (*types.Course, error) {
-	row := storage.Db.QueryRow("SELECT id, name FROM courses WHERE id = ?", id)
+	row := storage.db.QueryRow("SELECT id, name FROM courses WHERE id = ?", id)
 
 	course := new(types.Course)
 	err := row.Scan(&course.Id, &course.Name)
@@ -62,8 +67,7 @@ func (storage *SequelStorage) GetCourse(id int) (*types.Course, error) {
 }
 
 func (storage *SequelStorage) CreateCourse(name string) error {
-	_, err := storage.Db.Exec("INSERT INTO courses (name) VALUES (?)", name)
-
+	_, err := storage.db.Exec("INSERT INTO courses (name) VALUES (?)", name)
 	if err != nil {
 		return err
 	}
@@ -72,8 +76,7 @@ func (storage *SequelStorage) CreateCourse(name string) error {
 }
 
 func (storage *SequelStorage) DeleteCourse(id int) error {
-	_, err := storage.Db.Exec("DELETE FROM courses WHERE id = ?", id)
-
+	_, err := storage.db.Exec("DELETE FROM courses WHERE id = ?", id)
 	if err != nil {
 		return err
 	}
