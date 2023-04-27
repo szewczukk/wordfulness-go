@@ -1,0 +1,17 @@
+{{define "content"}}
+<form action="/update-course" method="POST">
+  <div class="grid">
+    <input type="number" name="id" hidden value="{{ .Id }}" />
+    <input
+      type="text"
+      name="name"
+      id="name"
+      placeholder="{{ .Name }}"
+      value="{{ .Name }}"
+      required
+    />
+
+    <input type="submit" value="Edit" />
+  </div>
+</form>
+{{end}}

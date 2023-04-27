@@ -30,6 +30,10 @@ func main() {
 			"templates/layout.html",
 			"templates/course.html",
 		)),
+		"UpdateCourse": template.Must(template.ParseFiles(
+			"templates/layout.html",
+			"templates/updateCourse.html",
+		)),
 	}
 
 	router := core.NewRouter()
@@ -37,6 +41,8 @@ func main() {
 
 	router.Get("/", coursesController.HomePage)
 	router.Post("/create-course", coursesController.CreateCourse)
+	router.Post("/update-course", coursesController.UpdateCoursePOST)
+	router.Get("/update-course", coursesController.UpdateCourseGET)
 	router.Get("/courses", coursesController.DetailedCourse)
 	router.Get("/delete-course", coursesController.DeleteCourse)
 
