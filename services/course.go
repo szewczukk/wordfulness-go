@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"html/template"
 	"net/http"
 	"strconv"
@@ -11,6 +12,7 @@ type CoursesStorage interface {
 	GetAllCourses() ([]*types.Course, error)
 	GetCourse(int) (*types.Course, error)
 	CreateCourse(string) error
+	UpdateCourse(int, string) error
 	DeleteCourse(int) error
 }
 
@@ -87,4 +89,45 @@ func (s *CoursesService) DeleteCourse(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, "/", http.StatusMovedPermanently)
+}
+
+func (s *CoursesService) UpdateCourseGET(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+
+	parsedId, err := strconv.ParseInt(id, 10, 32)
+	if err != nil {
+		http.Error(w, err.Error(), 400)
+		return
+	}
+
+	course, err := s.storage.GetCourse(int(parsedId))
+	if err != nil {
+		http.Error(w, err.Error(), 404)
+		return
+	}
+
+	s.templates["UpdateCourse"].Execute(w, course)
+}
+
+func (s *CoursesService) UpdateCoursePOST(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+
+	id := r.Form.Get("id")
+	name := r.Form.Get("name")
+
+	parsedId, err := strconv.ParseInt(id, 10, 32)
+	if err != nil {
+		http.Error(w, err.Error(), 400)
+		return
+	}
+
+	err = s.storage.UpdateCourse(int(parsedId), name)
+	if err != nil {
+		http.Error(w, err.Error(), 404)
+		return
+	}
+
+	redirectUrl := fmt.Sprint("/courses?id=", id)
+
+	http.Redirect(w, r, redirectUrl, http.StatusMovedPermanently)
 }
