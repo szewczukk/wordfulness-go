@@ -20,7 +20,15 @@ func (s *ErrorStorage) GetAllCourses() ([]*types.Course, error) {
 	return nil, errors.New("error")
 }
 
+func (s *ErrorStorage) GetCourse(id int) (*types.Course, error) {
+	return nil, errors.New("error")
+}
+
 func (s *ErrorStorage) CreateCourse(name string) error {
+	return errors.New("error")
+}
+
+func (s *ErrorStorage) DeleteCourse(id int) error {
 	return errors.New("error")
 }
 
@@ -29,9 +37,13 @@ func TestHomePage(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	storage := storage.NewMemoryStorage([]*types.Course{{Id: 0, Name: "German"}})
-	template, _ := template.New("homepage").Parse("{{range .}}{{.Id}} {{.Name}}{{end}}")
+	temp, _ := template.New("homepage").Parse("{{range .}}{{.Id}} {{.Name}}{{end}}")
+	templates := map[string]*template.Template{
+		"HomePage": temp,
+	}
+	coursesController := routes.NewCoursesController(storage, templates)
 
-	routes.HomePage(storage, template)(w, req)
+	coursesController.HomePage(w, req)
 
 	body := w.Body.String()
 
@@ -45,9 +57,13 @@ func TestErrorOnHomePage(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	storage := &ErrorStorage{}
-	template, _ := template.New("homepage").Parse("{{range .}}{{.Id}} {{.Name}}{{end}}")
+	temp, _ := template.New("homepage").Parse("{{range .}}{{.Id}} {{.Name}}{{end}}")
+	templates := map[string]*template.Template{
+		"HomePage": temp,
+	}
+	coursesController := routes.NewCoursesController(storage, templates)
 
-	routes.HomePage(storage, template)(w, req)
+	coursesController.HomePage(w, req)
 
 	statusCode := w.Result().StatusCode
 	body := w.Body.String()
@@ -70,9 +86,10 @@ func TestCreateCourse(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	storage := storage.NewMemoryStorage([]*types.Course{{Id: 0, Name: "German"}})
-	template, _ := template.New("homepage").Parse("{{range .}}{{.Id}} {{.Name}} {{end}}")
+	templates := map[string]*template.Template{}
+	coursesController := routes.NewCoursesController(storage, templates)
 
-	routes.CreateCourse(storage, template)(w, req)
+	coursesController.CreateCourse(w, req)
 
 	statusCode := w.Result().StatusCode
 	url, _ := w.Result().Location()
@@ -95,9 +112,10 @@ func TestCreateCourseWithErrorStorage(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	storage := &ErrorStorage{}
-	template, _ := template.New("homepage").Parse("{{range .}}{{.Id}} {{.Name}} {{end}}")
+	templates := map[string]*template.Template{}
+	coursesController := routes.NewCoursesController(storage, templates)
 
-	routes.CreateCourse(storage, template)(w, req)
+	coursesController.CreateCourse(w, req)
 
 	body := w.Body.String()
 	statusCode := w.Result().StatusCode
@@ -116,9 +134,13 @@ func TestExistingDetailedCourse(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	storage := storage.NewMemoryStorage([]*types.Course{{Id: 0, Name: "German"}})
-	template, _ := template.New("homepage").Parse("{{.Id}} {{.Name}}")
+	temp, _ := template.New("homepage").Parse("{{.Id}} {{.Name}}")
+	templates := map[string]*template.Template{
+		"DetailedCourse": temp,
+	}
+	coursesController := routes.NewCoursesController(storage, templates)
 
-	routes.DetailedCourse(storage, template)(w, req)
+	coursesController.DetailedCourse(w, req)
 
 	body := w.Body.String()
 
@@ -132,9 +154,13 @@ func TestExistingDetailedCourseWithInvalidId(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	storage := storage.NewMemoryStorage([]*types.Course{{Id: 0, Name: "German"}})
-	template, _ := template.New("homepage").Parse("{{.Id}} {{.Name}}")
+	temp, _ := template.New("homepage").Parse("{{.Id}} {{.Name}}")
+	templates := map[string]*template.Template{
+		"DetailedCourse": temp,
+	}
+	coursesController := routes.NewCoursesController(storage, templates)
 
-	routes.DetailedCourse(storage, template)(w, req)
+	coursesController.DetailedCourse(w, req)
 
 	body := w.Body.String()
 	statusCode := w.Result().StatusCode
@@ -153,9 +179,13 @@ func TestNonExistingDetailedCourse(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	storage := storage.NewMemoryStorage([]*types.Course{})
-	template, _ := template.New("homepage").Parse("{{.Id}} {{.Name}}")
+	temp, _ := template.New("homepage").Parse("{{.Id}} {{.Name}}")
+	templates := map[string]*template.Template{
+		"DetailedCourse": temp,
+	}
+	coursesController := routes.NewCoursesController(storage, templates)
 
-	routes.DetailedCourse(storage, template)(w, req)
+	coursesController.DetailedCourse(w, req)
 
 	body := w.Body.String()
 	statusCode := w.Result().StatusCode
@@ -174,8 +204,10 @@ func TestDeleteExistingCourse(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	storage := storage.NewMemoryStorage([]*types.Course{{Id: 0, Name: "German"}})
+	templates := map[string]*template.Template{}
+	coursesController := routes.NewCoursesController(storage, templates)
 
-	routes.DeleteCourse(storage)(w, req)
+	coursesController.DeleteCourse(w, req)
 
 	statusCode := w.Result().StatusCode
 	url, _ := w.Result().Location()
@@ -194,8 +226,10 @@ func TestDeleteExistingCourseWithInvalidId(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	storage := storage.NewMemoryStorage([]*types.Course{{Id: 0, Name: "German"}})
+	templates := map[string]*template.Template{}
+	coursesController := routes.NewCoursesController(storage, templates)
 
-	routes.DeleteCourse(storage)(w, req)
+	coursesController.DeleteCourse(w, req)
 
 	statusCode := w.Result().StatusCode
 	body := w.Body.String()
@@ -214,8 +248,10 @@ func TestDeleteNonExistingCourse(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	storage := storage.NewMemoryStorage([]*types.Course{})
+	templates := map[string]*template.Template{}
+	coursesController := routes.NewCoursesController(storage, templates)
 
-	routes.DeleteCourse(storage)(w, req)
+	coursesController.DeleteCourse(w, req)
 
 	statusCode := w.Result().StatusCode
 	body := w.Body.String()
