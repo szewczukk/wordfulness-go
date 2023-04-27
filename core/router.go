@@ -14,31 +14,31 @@ func NewRouter() *Router {
 	}
 }
 
-func (server *Router) Get(endpoint string, handler http.HandlerFunc) {
-	_, exists := server.routes[endpoint]
+func (r *Router) Get(endpoint string, handler http.HandlerFunc) {
+	_, exists := r.routes[endpoint]
 	if !exists {
-		server.routes[endpoint] = make(map[string]http.HandlerFunc)
+		r.routes[endpoint] = make(map[string]http.HandlerFunc)
 	}
 
-	server.routes[endpoint][http.MethodGet] = handler
+	r.routes[endpoint][http.MethodGet] = handler
 }
 
-func (server *Router) Post(endpoint string, handler http.HandlerFunc) {
-	_, exists := server.routes[endpoint]
+func (r *Router) Post(endpoint string, handler http.HandlerFunc) {
+	_, exists := r.routes[endpoint]
 	if !exists {
-		server.routes[endpoint] = make(map[string]http.HandlerFunc)
+		r.routes[endpoint] = make(map[string]http.HandlerFunc)
 	}
 
-	server.routes[endpoint][http.MethodPost] = handler
+	r.routes[endpoint][http.MethodPost] = handler
 }
 
-func (server *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	handler, exists := server.routes[r.URL.Path][r.Method]
+func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	handler, exists := r.routes[req.URL.Path][req.Method]
 
 	if !exists {
-		http.NotFound(w, r)
+		http.NotFound(w, req)
 		return
 	}
 
-	handler(w, r)
+	handler(w, req)
 }
