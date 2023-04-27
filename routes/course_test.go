@@ -20,6 +20,10 @@ func (s *ErrorStorage) GetAllCourses() ([]*types.Course, error) {
 	return nil, errors.New("error")
 }
 
+func (s *ErrorStorage) CreateCourse(name string) error {
+	return errors.New("error")
+}
+
 func TestHomePage(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	w := httptest.NewRecorder()
@@ -70,10 +74,40 @@ func TestCreateCourse(t *testing.T) {
 
 	routes.CreateCourse(storage, template)(w, req)
 
-	body := w.Body.String()
+	statusCode := w.Result().StatusCode
+	url, _ := w.Result().Location()
 
-	if body != "0 German 1 Spanish " {
+	if statusCode != 308 {
+		t.Errorf("Wrong status code returned, got: %v", statusCode)
+	}
+
+	if url.Path != "/" {
+		t.Errorf("Wrong redirection url, got: %v", statusCode)
+	}
+}
+
+func TestCreateCourseWithErrorStorage(t *testing.T) {
+	form := url.Values{}
+	form.Add("name", "Spanish")
+
+	req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(form.Encode()))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	w := httptest.NewRecorder()
+
+	storage := &ErrorStorage{}
+	template, _ := template.New("homepage").Parse("{{range .}}{{.Id}} {{.Name}} {{end}}")
+
+	routes.CreateCourse(storage, template)(w, req)
+
+	body := w.Body.String()
+	statusCode := w.Result().StatusCode
+
+	if body != "error\n" {
 		t.Errorf("Wrong body returned %v", body)
+	}
+
+	if statusCode != 400 {
+		t.Errorf("Wrong status code returned %v", statusCode)
 	}
 }
 
@@ -101,9 +135,14 @@ func TestDeleteExistingCourse(t *testing.T) {
 
 	routes.DeleteCourse(storage)(w, req)
 
-	body := w.Result().StatusCode
+	statusCode := w.Result().StatusCode
+	url, _ := w.Result().Location()
 
-	if body != 308 {
-		t.Errorf("Wrong status code returned, got: %v", body)
+	if statusCode != 308 {
+		t.Errorf("Wrong status code returned, got: %v", statusCode)
+	}
+
+	if url.Path != "/" {
+		t.Errorf("Wrong redirection url, got: %v", statusCode)
 	}
 }

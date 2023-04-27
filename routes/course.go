@@ -40,13 +40,7 @@ func CreateCourse(storage CreateCourseStorage, template *template.Template) http
 			return
 		}
 
-		courses, err := storage.GetAllCourses()
-		if err != nil {
-			http.Error(w, err.Error(), 404)
-			return
-		}
-
-		template.Execute(w, courses)
+		http.Redirect(w, r, "/", http.StatusPermanentRedirect)
 	})
 }
 
