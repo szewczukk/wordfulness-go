@@ -1,0 +1,22 @@
+{{define "content"}}
+<form action="/register" method="POST">
+  <div class="grid">
+    <input
+      type="text"
+      name="username"
+      id="username"
+      placeholder="Username"
+      required
+    />
+    <input
+      type="password"
+      name="passowrd"
+      id="passowrd"
+      placeholder="Password"
+      required
+    />
+
+    <input type="submit" value="Register" />
+  </div>
+</form>
+{{end}}

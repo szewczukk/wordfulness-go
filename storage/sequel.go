@@ -100,7 +100,7 @@ func (s *SequelStorage) UpdateCourse(id int, name string) error {
 }
 
 func (s *SequelStorage) CreateUser(name string, password string) error {
-	_, err := s.db.Exec("INSERT INTO users (name, password) VALUES (?, ?)", name, password)
+	_, err := s.db.Exec("INSERT INTO users (username, password) VALUES (?, ?)", name, password)
 	if err != nil {
 		return err
 	}

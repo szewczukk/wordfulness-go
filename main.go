@@ -34,17 +34,24 @@ func main() {
 			"templates/layout.html",
 			"templates/updateCourse.html",
 		)),
+		"CreateUser": template.Must(template.ParseFiles(
+			"templates/layout.html",
+			"templates/register.html",
+		)),
 	}
 
 	router := core.NewRouter()
-	coursesController := services.NewCoursesService(storage, templates)
+	coursesService := services.NewCoursesService(storage, templates)
+	userService := services.NewUserService(storage, templates)
 
-	router.Get("/", coursesController.HomePage)
-	router.Post("/create-course", coursesController.CreateCourse)
-	router.Post("/update-course", coursesController.UpdateCoursePOST)
-	router.Get("/update-course", coursesController.UpdateCourseGET)
-	router.Get("/courses", coursesController.DetailedCourse)
-	router.Get("/delete-course", coursesController.DeleteCourse)
+	router.Get("/", coursesService.HomePage)
+	router.Post("/create-course", coursesService.CreateCourse)
+	router.Post("/update-course", coursesService.UpdateCoursePOST)
+	router.Get("/register", userService.CreateUserGet)
+	router.Post("/register", userService.CreateUserPost)
+	router.Get("/update-course", coursesService.UpdateCourseGET)
+	router.Get("/courses", coursesService.DetailedCourse)
+	router.Get("/delete-course", coursesService.DeleteCourse)
 
 	fs := http.FileServer(http.Dir("./static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
