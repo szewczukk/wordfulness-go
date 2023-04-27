@@ -3,6 +3,8 @@ package services
 import (
 	"html/template"
 	"net/http"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type UserStorage interface {
@@ -14,7 +16,10 @@ type UserService struct {
 	templates map[string]*template.Template
 }
 
-func NewUserService(storage UserStorage, templates map[string]*template.Template) *UserService {
+func NewUserService(
+	storage UserStorage,
+	templates map[string]*template.Template,
+) *UserService {
 	return &UserService{
 		storage:   storage,
 		templates: templates,
@@ -27,7 +32,13 @@ func (s *UserService) CreateUserPost(w http.ResponseWriter, r *http.Request) {
 	username := r.Form.Get("username")
 	password := r.Form.Get("password")
 
-	err := s.storage.CreateUser(username, password)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.MinCost)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = s.storage.CreateUser(username, string(hashedPassword))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

@@ -10,6 +10,8 @@ import (
 	"wordfulness/services"
 	"wordfulness/storage"
 	"wordfulness/types"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 func TestCreateUserGet(t *testing.T) {
@@ -50,6 +52,7 @@ func TestCreateUserPost(t *testing.T) {
 	statusCode := w.Result().StatusCode
 	url, _ := w.Result().Location()
 	user, _ := storage.GetUser(0)
+	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte("zaq1@WSX"))
 
 	if statusCode != 301 {
 		t.Errorf("Wrong status code returned, got: %v", statusCode)
@@ -60,7 +63,11 @@ func TestCreateUserPost(t *testing.T) {
 	}
 
 	if user.Username != "jbytnar" {
-		t.Errorf("Wrong username , got: %v", user.Username)
+		t.Errorf("Wrong username, got: %v", user.Username)
+	}
+
+	if err != nil {
+		t.Errorf("Wrong password, got: \"%v\" with error: %v", user.Password, err.Error())
 	}
 }
 
