@@ -29,7 +29,7 @@ func TestCreateUserDuplicate(t *testing.T) {
 func TestGetUser(t *testing.T) {
 	storage := storage.NewUserMemoryStorage([]*types.User{{Id: 0, Username: "jbytnar", Password: ""}})
 
-	user, err := storage.GetUser(0)
+	user, err := storage.GetUserByUserName("jbytnar")
 
 	if err != nil {
 		t.Errorf("Error occurred, got: %v", err.Error())
@@ -43,7 +43,7 @@ func TestGetUser(t *testing.T) {
 func TestGetUserNotFound(t *testing.T) {
 	storage := storage.NewUserMemoryStorage([]*types.User{})
 
-	_, err := storage.GetUser(0)
+	_, err := storage.GetUserByUserName("jbytnar")
 
 	if err.Error() != "not found" {
 		t.Errorf("Incorrect error occurred, got: %v", err.Error())

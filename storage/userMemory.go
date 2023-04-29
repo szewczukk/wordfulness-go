@@ -15,9 +15,9 @@ func NewUserMemoryStorage(users []*types.User) *UserMemoryStorage {
 	}
 }
 
-func (s *UserMemoryStorage) GetUser(id int) (*types.User, error) {
+func (s *UserMemoryStorage) GetUserByUserName(username string) (*types.User, error) {
 	for _, user := range s.users {
-		if user.Id == id {
+		if user.Username == username {
 			return user, nil
 		}
 	}

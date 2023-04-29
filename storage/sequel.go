@@ -107,3 +107,15 @@ func (s *SequelStorage) CreateUser(name string, password string) error {
 
 	return nil
 }
+
+func (s *SequelStorage) GetUserByUserName(username string) (*types.User, error) {
+	row := s.db.QueryRow("SELECT id, username, password FROM users WHERE username = ?", username)
+
+	user := new(types.User)
+	err := row.Scan(&user.Id, &user.Username, &user.Password)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
