@@ -38,6 +38,10 @@ func main() {
 			"templates/layout.html",
 			"templates/register.html",
 		)),
+		"LogIn": template.Must(template.ParseFiles(
+			"templates/layout.html",
+			"templates/login.html",
+		)),
 	}
 
 	router := core.NewRouter()
@@ -52,6 +56,8 @@ func main() {
 	router.Get("/update-course", coursesService.UpdateCourseGET)
 	router.Get("/courses", coursesService.DetailedCourse)
 	router.Get("/delete-course", coursesService.DeleteCourse)
+	router.Get("/login", userService.LogInGet)
+	router.Post("/login", userService.LogInPost)
 
 	fs := http.FileServer(http.Dir("./static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))

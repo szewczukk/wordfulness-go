@@ -1,8 +1,10 @@
 package services
 
 import (
+	"errors"
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
 	"strconv"
 	"wordfulness/types"
@@ -38,7 +40,27 @@ func (s *CoursesService) HomePage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	s.templates["HomePage"].Execute(w, courses)
+	userName, err := r.Cookie("userName")
+	if err != nil {
+		switch {
+		case errors.Is(err, http.ErrNoCookie):
+			http.Error(w, "cookie not found", http.StatusBadRequest)
+		default:
+			log.Println(err)
+			http.Error(w, "server error", http.StatusInternalServerError)
+		}
+		return
+	}
+
+	payload := struct {
+		Courses  []*types.Course
+		UserName string
+	}{
+		Courses:  courses,
+		UserName: userName.Value,
+	}
+
+	s.templates["HomePage"].Execute(w, payload)
 }
 
 func (s *CoursesService) CreateCourse(w http.ResponseWriter, r *http.Request) {
