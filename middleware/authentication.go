@@ -2,13 +2,14 @@ package middleware
 
 import (
 	"net/http"
+	"strconv"
 	"wordfulness/types"
 )
 
 type AuthenticatedHandler func(http.ResponseWriter, *http.Request, *types.User)
 
 type UserStorage interface {
-	GetUserByUserName(string) (*types.User, error)
+	GetUserById(int) (*types.User, error)
 }
 
 func WithAuthentication(
@@ -23,7 +24,13 @@ func WithAuthentication(
 			return
 		}
 
-		user, err := storage.GetUserByUserName(cookie.Value)
+		id, err := strconv.ParseInt(cookie.Value, 10, 32)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		user, err := storage.GetUserById(int(id))
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

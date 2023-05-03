@@ -1,6 +1,7 @@
 package middleware_test
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -18,7 +19,7 @@ func TestWithAuthentication(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	storage := storage.NewUserMemoryStorage([]*types.User{{Id: 0, Username: "jbytnar", Password: "zaq"}})
-	req.AddCookie(makeAuthenticationCookie("jbytnar"))
+	req.AddCookie(makeAuthenticationCookie(0))
 
 	middleware.WithAuthentication(AuthenticatedHelloHandler, storage, "/login")(w, req)
 
@@ -54,7 +55,7 @@ func TestWithAuthenticationUserNotFound(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	storage := storage.NewUserMemoryStorage([]*types.User{})
-	req.AddCookie(makeAuthenticationCookie("jbytnar"))
+	req.AddCookie(makeAuthenticationCookie(0))
 
 	middleware.WithAuthentication(AuthenticatedHelloHandler, storage, "/login")(w, req)
 
@@ -70,10 +71,41 @@ func TestWithAuthenticationUserNotFound(t *testing.T) {
 	}
 }
 
-func makeAuthenticationCookie(userName string) *http.Cookie {
+func TestWithAuthenticationBadRequest(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	w := httptest.NewRecorder()
+
+	storage := storage.NewUserMemoryStorage([]*types.User{})
+	req.AddCookie(
+		&http.Cookie{
+			Name:     "authentication",
+			Value:    "str",
+			Path:     "/",
+			MaxAge:   3600,
+			HttpOnly: true,
+			Secure:   true,
+			SameSite: http.SameSiteLaxMode,
+		},
+	)
+
+	middleware.WithAuthentication(AuthenticatedHelloHandler, storage, "/login")(w, req)
+
+	body := w.Body.String()
+	statusCode := w.Result().StatusCode
+
+	if statusCode != 400 {
+		t.Errorf("Wrong status code returned, got: %v", statusCode)
+	}
+
+	if body != "strconv.ParseInt: parsing \"str\": invalid syntax\n" {
+		t.Errorf("Wrong body returned %v", body)
+	}
+}
+
+func makeAuthenticationCookie(id int) *http.Cookie {
 	return &http.Cookie{
 		Name:     "authentication",
-		Value:    "jbytnar",
+		Value:    fmt.Sprint("", id),
 		Path:     "/",
 		MaxAge:   3600,
 		HttpOnly: true,

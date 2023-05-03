@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"html/template"
 	"net/http"
 	"wordfulness/types"
@@ -83,16 +84,16 @@ func (s *UserService) LogInPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cookie := makeAuthenticationCookie(username)
+	cookie := makeAuthenticationCookie(user.Id)
 
 	http.SetCookie(w, cookie)
 	http.Redirect(w, r, "/", http.StatusMovedPermanently)
 }
 
-func makeAuthenticationCookie(username string) *http.Cookie {
+func makeAuthenticationCookie(userId int) *http.Cookie {
 	return &http.Cookie{
 		Name:     "authentication",
-		Value:    username,
+		Value:    fmt.Sprint(userId),
 		Path:     "/",
 		MaxAge:   3600,
 		HttpOnly: true,

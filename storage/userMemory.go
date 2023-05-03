@@ -24,6 +24,15 @@ func (s *UserMemoryStorage) GetUserByUserName(username string) (*types.User, err
 	return nil, errors.New("not found")
 }
 
+func (s *UserMemoryStorage) GetUserById(id int) (*types.User, error) {
+	for _, user := range s.users {
+		if user.Id == id {
+			return user, nil
+		}
+	}
+	return nil, errors.New("not found")
+}
+
 func (s *UserMemoryStorage) CreateUser(
 	username string,
 	password string,
