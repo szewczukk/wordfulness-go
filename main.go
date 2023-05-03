@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"wordfulness/core"
+	"wordfulness/middleware"
 	"wordfulness/services"
 	"wordfulness/storage"
 
@@ -48,7 +49,7 @@ func main() {
 	coursesService := services.NewCoursesService(storage, templates)
 	userService := services.NewUserService(storage, templates)
 
-	router.Get("/", coursesService.HomePage)
+	router.Get("/", middleware.WithAuthentication(coursesService.HomePage, storage))
 	router.Post("/create-course", coursesService.CreateCourse)
 	router.Post("/update-course", coursesService.UpdateCoursePOST)
 	router.Get("/register", userService.CreateUserGet)

@@ -1,12 +1,11 @@
 package services
 
 import (
-	"errors"
 	"fmt"
 	"html/template"
-	"log"
 	"net/http"
 	"strconv"
+	"wordfulness/middleware"
 	"wordfulness/types"
 )
 
@@ -40,24 +39,18 @@ func (s *CoursesService) HomePage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userName, err := r.Cookie("userName")
-	if err != nil {
-		switch {
-		case errors.Is(err, http.ErrNoCookie):
-			http.Error(w, "cookie not found", http.StatusBadRequest)
-		default:
-			log.Println(err)
-			http.Error(w, "server error", http.StatusInternalServerError)
-		}
+	user, ok := middleware.UserFromContext(r.Context())
+	if !ok {
+		http.Error(w, "User not present in the context", http.StatusInternalServerError)
 		return
 	}
 
 	payload := struct {
-		Courses  []*types.Course
 		UserName string
+		Courses  []*types.Course
 	}{
+		UserName: user.Username,
 		Courses:  courses,
-		UserName: userName.Value,
 	}
 
 	s.templates["HomePage"].Execute(w, payload)

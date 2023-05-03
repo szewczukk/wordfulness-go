@@ -83,8 +83,15 @@ func (s *UserService) LogInPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cookie := http.Cookie{
-		Name:     "userName",
+	cookie := createAuthenticationCookie(username)
+
+	http.SetCookie(w, cookie)
+	http.Redirect(w, r, "/", http.StatusMovedPermanently)
+}
+
+func createAuthenticationCookie(username string) *http.Cookie {
+	return &http.Cookie{
+		Name:     "authentication",
 		Value:    username,
 		Path:     "/",
 		MaxAge:   3600,
@@ -92,7 +99,4 @@ func (s *UserService) LogInPost(w http.ResponseWriter, r *http.Request) {
 		Secure:   true,
 		SameSite: http.SameSiteLaxMode,
 	}
-
-	http.SetCookie(w, &cookie)
-	http.Redirect(w, r, "/", http.StatusMovedPermanently)
 }
