@@ -11,11 +11,15 @@ type UserStorage interface {
 	GetUserByUserName(string) (*types.User, error)
 }
 
-func WithAuthentication(handler AuthenticatedHandler, storage UserStorage) http.HandlerFunc {
+func WithAuthentication(
+	handler AuthenticatedHandler,
+	storage UserStorage,
+	loginUrl string,
+) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		cookie, err := r.Cookie("authentication")
 		if err != nil {
-			http.Redirect(w, r, "/login", http.StatusMovedPermanently)
+			http.Redirect(w, r, loginUrl, http.StatusMovedPermanently)
 			return
 		}
 

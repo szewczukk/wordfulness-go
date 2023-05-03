@@ -49,7 +49,9 @@ func main() {
 	coursesService := services.NewCoursesService(storage, templates)
 	userService := services.NewUserService(storage, templates)
 
-	router.Get("/", middleware.WithAuthentication(coursesService.HomePage, storage))
+	router.Get("/", middleware.WithAuthentication(
+		coursesService.HomePage, storage, "/login",
+	))
 	router.Post("/create-course", coursesService.CreateCourse)
 	router.Post("/update-course", coursesService.UpdateCoursePOST)
 	router.Get("/register", userService.CreateUserGet)
