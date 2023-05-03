@@ -5,7 +5,6 @@ import (
 	"html/template"
 	"net/http"
 	"strconv"
-	"wordfulness/middleware"
 	"wordfulness/types"
 )
 
@@ -32,16 +31,14 @@ func NewCoursesService(
 	}
 }
 
-func (s *CoursesService) HomePage(w http.ResponseWriter, r *http.Request) {
+func (s *CoursesService) HomePage(
+	w http.ResponseWriter,
+	r *http.Request,
+	user *types.User,
+) {
 	courses, err := s.storage.GetAllCourses()
 	if err != nil {
 		http.Error(w, err.Error(), 400)
-		return
-	}
-
-	user, ok := middleware.UserFromContext(r.Context())
-	if !ok {
-		http.Error(w, "User not present in the context", http.StatusInternalServerError)
 		return
 	}
 

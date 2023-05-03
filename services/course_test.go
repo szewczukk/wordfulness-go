@@ -41,17 +41,19 @@ func TestHomePage(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	storage := storage.NewCourseMemoryStorage([]*types.Course{{Id: 0, Name: "German"}})
-	temp, _ := template.New("homepage").Parse("{{range .}}{{.Id}} {{.Name}}{{end}}")
+	temp, _ := template.New("homepage").Parse(
+		"{{.UserName}} {{range .Courses}}{{.Id}} {{.Name}}{{end}}",
+	)
 	templates := map[string]*template.Template{
 		"HomePage": temp,
 	}
 	service := services.NewCoursesService(storage, templates)
 
-	service.HomePage(w, req)
+	service.HomePage(w, req, &types.User{Id: 0, Username: "jbytnar", Password: ""})
 
 	body := w.Body.String()
 
-	if body != "0 German" {
+	if body != "jbytnar 0 German" {
 		t.Errorf("Wrong body returned %v", body)
 	}
 }
@@ -61,13 +63,15 @@ func TestHomePageError(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	storage := &ErrorStorage{}
-	temp, _ := template.New("homepage").Parse("{{range .}}{{.Id}} {{.Name}}{{end}}")
+	temp, _ := template.New("homepage").Parse(
+		"{{.UserName}} {{range .Courses}}{{.Id}} {{.Name}}{{end}}",
+	)
 	templates := map[string]*template.Template{
 		"HomePage": temp,
 	}
 	service := services.NewCoursesService(storage, templates)
 
-	service.HomePage(w, req)
+	service.HomePage(w, req, &types.User{Id: 0, Username: "jbytnar", Password: ""})
 
 	statusCode := w.Result().StatusCode
 	body := w.Body.String()
