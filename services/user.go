@@ -83,13 +83,13 @@ func (s *UserService) LogInPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cookie := createAuthenticationCookie(username)
+	cookie := makeAuthenticationCookie(username)
 
 	http.SetCookie(w, cookie)
 	http.Redirect(w, r, "/", http.StatusMovedPermanently)
 }
 
-func createAuthenticationCookie(username string) *http.Cookie {
+func makeAuthenticationCookie(username string) *http.Cookie {
 	return &http.Cookie{
 		Name:     "authentication",
 		Value:    username,

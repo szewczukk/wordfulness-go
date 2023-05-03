@@ -45,13 +45,7 @@ func (s *CoursesService) HomePage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	payload := struct {
-		UserName string
-		Courses  []*types.Course
-	}{
-		UserName: user.Username,
-		Courses:  courses,
-	}
+	payload := makeHomePagePayload(user, courses)
 
 	s.templates["HomePage"].Execute(w, payload)
 }
@@ -145,4 +139,19 @@ func (s *CoursesService) UpdateCoursePOST(w http.ResponseWriter, r *http.Request
 	redirectUrl := fmt.Sprint("/courses?id=", id)
 
 	http.Redirect(w, r, redirectUrl, http.StatusMovedPermanently)
+}
+
+type HomePagePayload struct {
+	UserName string
+	Courses  []*types.Course
+}
+
+func makeHomePagePayload(
+	user *types.User,
+	courses []*types.Course,
+) HomePagePayload {
+	return HomePagePayload{
+		UserName: user.Username,
+		Courses:  courses,
+	}
 }
