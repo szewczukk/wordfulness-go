@@ -161,7 +161,72 @@ func TestLogInPost(t *testing.T) {
 		t.Errorf("Wrong redirection url, got: %v", statusCode)
 	}
 
-	if cookies[0].Value != "jbytnar" {
+	if cookies[0].Value != "0" {
 		t.Errorf("Wrong cookie, got: %v", cookies)
+	}
+}
+
+func TestLogInPostIncorrectPassword(t *testing.T) {
+	form := url.Values{}
+	form.Add("username", "jbytnar")
+	form.Add("password", "incorrect")
+
+	req := httptest.NewRequest(http.MethodPost, "/login", strings.NewReader(form.Encode()))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	w := httptest.NewRecorder()
+
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte("zaq1@WSX"), bcrypt.MinCost)
+	storage := storage.NewUserMemoryStorage([]*types.User{
+		{Id: 0, Username: "jbytnar", Password: string(hashedPassword)},
+	})
+	temp, _ := template.New("homepage").Parse("render")
+	templates := map[string]*template.Template{
+		"LogIn": temp,
+	}
+	service := services.NewUserService(storage, templates)
+
+	service.LogInPost(w, req)
+
+	statusCode := w.Result().StatusCode
+	body := w.Body.String()
+
+	if statusCode != 400 {
+		t.Errorf("Wrong status code returned, got: %v", statusCode)
+	}
+
+	if body != "crypto/bcrypt: hashedPassword is not the hash of the given password\n" {
+		t.Errorf("Wrong body returned, got: %v", body)
+	}
+}
+
+func TestLogInPostNoPassword(t *testing.T) {
+	form := url.Values{}
+	form.Add("username", "jbytnar")
+
+	req := httptest.NewRequest(http.MethodPost, "/login", strings.NewReader(form.Encode()))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	w := httptest.NewRecorder()
+
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte("zaq1@WSX"), bcrypt.MinCost)
+	storage := storage.NewUserMemoryStorage([]*types.User{
+		{Id: 0, Username: "jbytnar", Password: string(hashedPassword)},
+	})
+	temp, _ := template.New("homepage").Parse("render")
+	templates := map[string]*template.Template{
+		"LogIn": temp,
+	}
+	service := services.NewUserService(storage, templates)
+
+	service.LogInPost(w, req)
+
+	statusCode := w.Result().StatusCode
+	body := w.Body.String()
+
+	if statusCode != 400 {
+		t.Errorf("Wrong status code returned, got: %v", statusCode)
+	}
+
+	if body != "crypto/bcrypt: hashedPassword is not the hash of the given password\n" {
+		t.Errorf("Wrong body returned, got: %v", body)
 	}
 }
